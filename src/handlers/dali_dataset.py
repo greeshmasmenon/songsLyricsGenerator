@@ -43,7 +43,7 @@ class DALIDataset():
             raise TypeError(f"Set the data_path for the location of the DALI datasets; data_path = {self._data_path}")
 
     def get_info(self) -> pd.DataFrame:
-        logging.info(f"Getting the info related to the data from the data_path = {self.__data_path}")
+        logging.info(f"Getting the info related to the data from the data_path = {self._data_path}")
         if self._data_path is not None:
             dali_info = dali_code.get_info(self._data_path + 'info/DALI_DATA_INFO.gz')
             dali_df = pd.DataFrame(dali_info)[1:]
@@ -53,7 +53,7 @@ class DALIDataset():
         else:
             raise TypeError(f"Set the data_path for the location of the DALI datasets; data_path = {self._data_path}")
 
-    def get_audio(self):
+    def get_audio(self) -> None:
         logging.info("Downloading audio from youtube URLs associated with the info file")
         if self._data_path is not None or self._file_path is not None:
             dali_info = self.get_info()
