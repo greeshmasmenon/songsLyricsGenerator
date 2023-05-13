@@ -22,7 +22,7 @@ class DALIDataset():
         logging.info("Setting the data_path")
         self._data_path = data_path
 
-    def __getitem__(self) -> Dict:
+    def get_data(self) -> Dict:
         logging.info("Getting the data_path")
         return dali_code.get_the_DALI_dataset(self._data_path, skip=[], keep=[])
 
