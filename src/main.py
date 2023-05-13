@@ -1,4 +1,4 @@
-from io.dali_dataset import  DALIDataset
+from handlers.dali_dataset import  DALIDataset
 
 
 # Press the green button in the gutter to run the script.

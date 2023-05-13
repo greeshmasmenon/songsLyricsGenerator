@@ -6,7 +6,7 @@ import pandas as pd
 import numpy as np
 
 logging.basicConfig(filename='app.log', filemode='w', format='%(name)s - %(levelname)s - %(message)s')
-
+__all__ = ["DALIDataset"]
 
 class DALIDataset():
     def __init__(self):
