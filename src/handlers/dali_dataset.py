@@ -1,7 +1,7 @@
 from abc import ABC
 import DALI as dali_code
 import logging
-from typing import Dict
+from typing import Dict, Optional, List
 import pandas as pd
 import numpy as np
 
@@ -9,7 +9,7 @@ logging.basicConfig(filename='app.log', filemode='w', format='%(name)s - %(level
 __all__ = ["DALIDataset"]
 
 class DALIDataset():
-    def __init__(self, data_path: str , file_path: str):
+    def __init__(self, data_path: str , file_path: Optional[str] = data_path + 'audio/'):
         self._data_path = data_path
         self._file_path = file_path
 
@@ -42,6 +42,11 @@ class DALIDataset():
         else:
             raise TypeError(f"Set the data_path for the location of the DALI datasets; data_path = {self._data_path}")
 
+    def download_data(self) -> NotImplementedError:
+        # dali_data = self.get_data()
+        # logging.info(f"Downloading the data into the file path = {self._data_path}data/")
+        raise NotImplementedError
+
     def get_info(self) -> pd.DataFrame:
         logging.info(f"Getting the info related to the data from the data_path = {self._data_path}")
         if self._data_path is not None:
@@ -53,12 +58,18 @@ class DALIDataset():
         else:
             raise TypeError(f"Set the data_path for the location of the DALI datasets; data_path = {self._data_path}")
 
-    def get_audio(self) -> None:
+    def download_info(self) -> None:
+        dali_df = self.get_info()
+        logging.info(f"Downloading to the file path = {self._data_path}info/ ")
+        dali_df.to_csv(self._data_path + 'info/dali_info.csv')
+        logging.info(f"Download complete in the file path = {self._data_path}info/ ")
+
+    def download_audio(self) -> List:
         logging.info("Downloading audio from youtube URLs associated with the info file")
         if self._data_path is not None or self._file_path is not None:
             dali_info = self.get_info()
             logging.info(f"The DALI Audio download has {len(dali_info)} errors in it")
-            dali_code.get_audio(dali_info, self._file_path, skip=[], keep=[])
+            return dali_code.get_audio(dali_info, self._file_path, skip=[], keep=[])
         else:
             raise TypeError(f"Set the data_path & file_path for the location of the DALI datasets; "
                             f"data_path = {self._data_path}, file_path = {self._file_path}")
