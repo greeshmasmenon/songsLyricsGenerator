@@ -10,5 +10,3 @@ if __name__ == '__main__':
     dali_info = dali.get_info()
     print(dali_info)
     dali_audio_errors = dali.download_audio()
-
-
