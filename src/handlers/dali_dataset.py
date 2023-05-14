@@ -5,13 +5,16 @@ from typing import Dict, Optional, List
 import pandas as pd
 import numpy as np
 
-logging.basicConfig(filename='app.log', filemode='w', format='%(name)s - %(levelname)s - %(message)s', level=logging.INFO)
+logging.basicConfig(filename='app.log', filemode='w', format='%(asctime)s - %(name)s - %(levelname)s - %(message)s', level=logging.INFO)
 __all__ = ["DALIDataset"]
 
 class DALIDataset():
-    def __init__(self, data_path: str , file_path: Optional[str] = data_path + 'audio/'):
+    def __init__(self, data_path: str , file_path: Optional[str] = None):
         self._data_path = data_path
-        self._file_path = file_path
+        if file_path is None:
+            self._file_path = self._data_path + 'audio/'
+        else:
+            self._file_path = file_path
 
     @property
     def data_path(self):
