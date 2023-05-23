@@ -11,3 +11,4 @@ if __name__ == '__main__':
     dali_info.to_csv("/Users/macbook/PycharmProjects/songsLyricsGenerator/data/DALI_v1.0/info/dali_info.csv")
     # print(dali_info)
     # dali_audio_errors = dali.download_audio()
+
