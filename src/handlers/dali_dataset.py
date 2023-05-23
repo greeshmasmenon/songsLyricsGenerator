@@ -1,9 +1,13 @@
 from abc import ABC
 import DALI as dali_code
 import logging
-from typing import Dict, Optional, List
 import pandas as pd
+import uuid
+import csv
+import os
 import numpy as np
+from pydub import AudioSegment
+from typing import Dict, Optional, List
 
 logging.basicConfig(filename='app.log', filemode='w', format='%(asctime)s - %(name)s - %(levelname)s - %(message)s', level=logging.INFO)
 __all__ = ["DALIDataset"]
@@ -70,13 +74,40 @@ class DALIDataset():
     def download_audio(self) -> List:
         logging.info("Downloading audio from youtube URLs associated with the info file")
         if self._data_path is not None or self._file_path is not None:
-            dali_info = self.get_info()
-            logging.info(f"The DALI Audio download has {len(dali_info)} errors in it")
-            return dali_code.get_audio(dali_info, self._file_path, skip=[], keep=[])
+            dali_dataset_info = self.get_info()
+            logging.info(f"The DALI Audio download has {len(dali_dataset_info)} errors in it")
+            return dali_code.get_audio(dali_dataset_info, self._file_path, skip=[], keep=[])
         else:
             raise TypeError(f"Set the data_path & file_path for the location of the DALI datasets; "
                             f"data_path = {self._data_path}, file_path = {self._file_path}")
 
+    def extract_dali_id_from_directory(self, path: str, extension: str) -> List[str]:
+        wav_files = os.listdir(path)
+        extract_dali_id = lambda x : x.split('.')[0]
+        extract_file_extension = lambda x : x.split('.')[1]
+        dali_ids = [extract_dali_id(file_name) for file_name \
+                    in wav_files if extract_file_extension(file_name) == extension]
+        logging.info(f"dali ids extracted from the file system directory = {path}")
+        return dali_ids
 
-
+    def split_align_wav_transcripts(self, source_audio_path: str, destination_audio_path: str, extension: str = '.wav'):
+        header = ["file_name", "transcription"]
+        metadata_csv_save_path = destination_audio_path + "metadata.csv"
+        dali_ids = self.extract_dali_id_from_directory(source_audio_path, extension)
+        dali_dataset = self.get_data()
+        with open(metadata_csv_save_path, 'w', encoding='UTF8', newline='') as f:
+            writer = csv.writer(f, delimiter=',', quoting=csv.QUOTE_MINIMAL)
+            writer.writerow(header)
+            for dali_id in dali_ids:
+                logging.info(f"Extracting the data for the dali_id = {dali_id}")
+                for segment in dali_dataset[dali_id].annotations["annot"]["lines"]:
+                    logging.info(f"frequency = {segment['freq']}, time = {segment['time']}, text = {segment['text']}")
+                    segment_start, segment_end = segment['time']
+                    _transcript = segment['text']
+                    source_audio_file = AudioSegment.from_wav(source_audio_path + dali_id + extension)
+                    extracted_audio_segment = source_audio_file[segment_start * 1000:segment_end * 1000]
+                    extracted_audio_filename = uuid.uuid4().hex + '.wav'
+                    extracted_audio_segment.export(destination_audio_path + extracted_audio_filename)
+                    writer.writerow([extracted_audio_filename, _transcript])
+                    logging.info(f"wav file saved at {destination_audio_path + extracted_audio_filename} and has transcription = {_transcript}")
 
