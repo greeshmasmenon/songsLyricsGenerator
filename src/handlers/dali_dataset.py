@@ -9,10 +9,12 @@ import numpy as np
 from pydub import AudioSegment
 from typing import Dict, Optional, List
 
-logging.basicConfig(filename='app.log', filemode='w', format='%(asctime)s - %(name)s - %(levelname)s - %(message)s', level=logging.INFO)
+logging.basicConfig(filename='app.log', filemode='w', format='%(asctime)s - %(funcName)s - %(levelname)s - %(message)s', level=logging.INFO)
 __all__ = ["DALIDataset"]
 
-class DALIDataset():
+
+class DALIDataset:
+
     def __init__(self, data_path: str , file_path: Optional[str] = None):
         self._data_path = data_path
         if file_path is None:
