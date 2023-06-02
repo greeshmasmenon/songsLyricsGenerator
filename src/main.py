@@ -13,9 +13,12 @@ if __name__ == '__main__':
 
     dali = DALIDataset(data_path=DALI_CONSTANTS.dataset_path)
     dali_dataset = dali.get_data()
-    print(dali_dataset)
+    logging.info(f"dali dataset has been downloaded")
     dali_info = dali.get_info()
+    logging.info(f"dali_info has been obtained")
     dali_info.to_csv(DALI_CONSTANTS.dataset_info_path)
-    # print(dali_info)
-    # dali_audio_errors = dali.download_audio()
+    logging.info(f"dali_info has been saved in csv at location = {DALI_CONSTANTS.dataset_info_path}")
+    dali_audio_errors = dali.download_audio()
+    logging.info(f"# Errors in the download of DALI dataset = {len(dali_audio_errors)}")
+
 

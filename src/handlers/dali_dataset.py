@@ -105,11 +105,11 @@ class DALIDataset:
                 for segment in dali_dataset[dali_id].annotations["annot"]["lines"]:
                     logging.info(f"frequency = {segment['freq']}, time = {segment['time']}, text = {segment['text']}")
                     segment_start, segment_end = segment['time']
-                    _transcript = segment['text']
+                    transcript = segment['text']
                     source_audio_file = AudioSegment.from_wav(source_audio_path + dali_id + extension)
                     extracted_audio_segment = source_audio_file[segment_start * 1000:segment_end * 1000]
                     extracted_audio_filename = uuid.uuid4().hex + '.wav'
                     extracted_audio_segment.export(destination_audio_path + extracted_audio_filename)
-                    writer.writerow([extracted_audio_filename, _transcript])
+                    writer.writerow([dali_id, segment_start, segment_end, extracted_audio_filename, transcript])
                     logging.info(f"wav file saved at {destination_audio_path + extracted_audio_filename} and has transcription = {_transcript}")
 
