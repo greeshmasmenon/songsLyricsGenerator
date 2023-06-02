@@ -12,7 +12,6 @@ import torch
 from dataclasses import dataclass, field
 from typing import Any, Dict, List, Optional, Union
 
-
 CHARS_TO_REMOVE_FROM_TRANSCRIPTS = '[\,\?\.\!\-\;\:\"\%\$\&\^\*\@\#\<\>\/\+\\=\_\\}\{\)\(\]\[\`1234567890]'
 
 
@@ -109,12 +108,11 @@ def train_dataset_transform(audio_dataset: Dataset, num_processes=1, ) -> Datase
 
 def filter_huggingface_dataset_by_time_duration(audio_dataset: Dataset, processor: Wav2Vec2Processor, time_duration=6):
     audio_dataset["train"] = audio_dataset["train"]. \
-                                 filter(lambda x: x < time_duration * processor.feature_extractor.sampling_rate,
-                                        input_columns=["input_length"]) \
- \
-                             @ dataclass
+        filter(lambda x: x < time_duration * processor.feature_extractor.sampling_rate,
+               input_columns=["input_length"])
 
 
+@dataclass
 class DataCollatorCTCWithPadding:
     """
     Data collator that will dynamically pad the inputs received.
@@ -190,7 +188,6 @@ def huggingface_training_setup():
         warmup_steps=1000,
         save_total_limit=2,
     )
-
 
     trainer = Trainer(
         model=model,
