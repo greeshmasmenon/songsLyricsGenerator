@@ -1,5 +1,4 @@
 import re
-
 import datasets
 from ftlangdetect import detect
 import pandas as pd
@@ -7,7 +6,7 @@ import numpy as np
 from datasets import load_dataset, Dataset, Audio, load_metric, load_dataset, Metric
 import json
 from transformers import Wav2Vec2CTCTokenizer, Wav2Vec2FeatureExtractor, Wav2Vec2Processor
-from transformers import TrainingArguments, Trainer
+from transformers import TrainingArguments, Trainer, Wav2Vec2ForCTC
 import torch
 from dataclasses import dataclass, field
 from typing import Any, Dict, List, Optional, Union
@@ -157,6 +156,10 @@ class DataCollatorCTCWithPadding:
         return batch
 
 
+def data_collator(custom_processor: Wav2Vec2Processor, padding: bool) -> DataCollatorCTCWithPadding:
+    return DataCollatorCTCWithPadding(processor=custom_processor, padding=padding)
+
+
 def wer_metric() -> Metric:
     return load_metric("wer")
 
@@ -171,7 +174,7 @@ def compute_metrics(pred: Dataset, processor: Wav2Vec2Processor) -> Dict:
     return {"wer": wer}
 
 
-def huggingface_training_setup():
+def huggingface_train_asr(audio_dataset:Dataset, model:Wav2Vec2ForCTC):
     training_args = TrainingArguments(
         output_dir="songstolyrics_wav2vec",
         group_by_length=True,
@@ -200,4 +203,15 @@ def huggingface_training_setup():
     )
 
     trainer.train(resume_from_checkpoint=False)
+    trainer.save_state()
+    trainer.save_model(save_location)
     return "Success"
+
+
+def load_model(model_name: str, processor: Wav2Vec2Processor) -> Wav2Vec2ForCTC:
+    model = Wav2Vec2ForCTC.from_pretrained(
+        model_name,
+        ctc_loss_reduction="mean",
+        pad_token_id=processor.tokenizer.pad_token_id,
+    )
+    return model
