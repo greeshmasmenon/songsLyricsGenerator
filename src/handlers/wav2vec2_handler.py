@@ -174,7 +174,11 @@ def compute_metrics(pred: Dataset, processor: Wav2Vec2Processor) -> Dict:
     return {"wer": wer}
 
 
-def huggingface_train_asr(audio_dataset:Dataset, model:Wav2Vec2ForCTC):
+def huggingface_train_asr(audio_dataset:Dataset,
+                          model:Wav2Vec2ForCTC,
+                          processor: Wav2Vec2Processor,
+                          save_location: str):
+
     training_args = TrainingArguments(
         output_dir="songstolyrics_wav2vec",
         group_by_length=True,
@@ -209,9 +213,9 @@ def huggingface_train_asr(audio_dataset:Dataset, model:Wav2Vec2ForCTC):
 
 
 def load_model(model_name: str, processor: Wav2Vec2Processor) -> Wav2Vec2ForCTC:
-    model = Wav2Vec2ForCTC.from_pretrained(
+
+    return Wav2Vec2ForCTC.from_pretrained(
         model_name,
         ctc_loss_reduction="mean",
         pad_token_id=processor.tokenizer.pad_token_id,
     )
-    return model
