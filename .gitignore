@@ -9,3 +9,30 @@
 /data/
 /.idea/other.xml
 *.log
+/src/notebooks/4. Testing.ipynb
+/src/notebooks/.ipynb_checkpoints/4. Testing-checkpoint.ipynb
+/src/notebooks/songstolyrics_wav2vec/checkpoint-57000/config.json
+/src/notebooks/songstolyrics_wav2vec/checkpoint-57500/config.json
+/.idea/jupyter-settings.xml
+/src/notebooks/songstolyrics_wav2vec/checkpoint-57000/optimizer.pt
+/src/notebooks/songstolyrics_wav2vec/checkpoint-57500/optimizer.pt
+/src/notebooks/songstolyrics_wav2vec/checkpoint-57000/preprocessor_config.json
+/src/notebooks/songstolyrics_wav2vec/checkpoint-57500/preprocessor_config.json
+/src/notebooks/songstolyrics_wav2vec_processor/preprocessor_config.json
+/src/notebooks/songstolyrics_wav2vec/checkpoint-57000/pytorch_model.bin
+/src/notebooks/songstolyrics_wav2vec/checkpoint-57500/pytorch_model.bin
+/src/notebooks/songstolyrics_wav2vec/checkpoint-57000/rng_state.pth
+/src/notebooks/songstolyrics_wav2vec/checkpoint-57500/rng_state.pth
+/src/notebooks/songstolyrics_wav2vec/checkpoint-57000/scaler.pt
+/src/notebooks/songstolyrics_wav2vec/checkpoint-57500/scaler.pt
+/src/notebooks/songstolyrics_wav2vec/checkpoint-57000/scheduler.pt
+/src/notebooks/songstolyrics_wav2vec/checkpoint-57500/scheduler.pt
+/src/notebooks/songstolyrics_wav2vec_processor/special_tokens_map.json
+/src/notebooks/songstolyrics_wav2vec_processor/tokenizer_config.json
+/src/notebooks/Torch Tutorial.ipynb
+/src/notebooks/songstolyrics_wav2vec/checkpoint-57000/trainer_state.json
+/src/notebooks/songstolyrics_wav2vec/checkpoint-57500/trainer_state.json
+/src/notebooks/songstolyrics_wav2vec/trainer_state.json
+/src/notebooks/songstolyrics_wav2vec/checkpoint-57000/training_args.bin
+/src/notebooks/songstolyrics_wav2vec/checkpoint-57500/training_args.bin
+/src/notebooks/songstolyrics_wav2vec_processor/vocab.json
