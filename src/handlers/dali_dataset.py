@@ -15,7 +15,7 @@ __all__ = ["DALIDataset"]
 
 class DALIDataset:
 
-    def __init__(self, data_path: str , file_path: Optional[str] = None):
+    def __init__(self, data_path: str, file_path: Optional[str] = None):
         self._data_path = data_path
         if file_path is None:
             self._file_path = self._data_path + 'audio/'
