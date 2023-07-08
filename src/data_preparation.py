@@ -8,7 +8,7 @@ logging.basicConfig(filename='app.log', filemode='w', format='%(asctime)s - %(fu
 
 def data_preparation(DALIDataset) -> str:
     """
-    Data Preparation Step for the dali dataset
+    Data Preparation Step for the dali dataset.
     """
 
     dali = DALIDataset(data_path= MacDataConstants)
