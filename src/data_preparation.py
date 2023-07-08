@@ -20,5 +20,5 @@ def data_preparation(dali_dataset: DALIDataset) -> str:
 if __name__ == "__main__":
     dali = DALIDataset(data_path=HPCDataConstants.DATASET_PATH,
                        audio_file_path=HPCDataConstants.AUDIO_FILE_PATH,
-                       info_path=HPCDataConstants.DATASET_INFO_PATH)
+                       info_path=HPCDataConstants.DATASET_INFO_GZ)
     data_preparation(dali)

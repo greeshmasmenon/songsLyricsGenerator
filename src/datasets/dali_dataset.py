@@ -18,7 +18,7 @@ __all__ = ["DALIDataset"]
 
 class DALIDataset(Dataset):
 
-    def __init__(self, data_path: str, audio_file_path: Optional[str] = None, info_path=Optional[str]):
+    def __init__(self, data_path: str, audio_file_path: Optional[str] = None, info_file_path=Optional[str]):
 
         if data_path is None:
             raise KeyError("Enter the value for data_path")
@@ -30,12 +30,12 @@ class DALIDataset(Dataset):
         else:
             self._audio_file_path = audio_file_path
 
-        if info_path is None:
+        if info_file_path is None:
             self._info_path = self._data_path + 'info/DALI_DATA_INFO.gz'
-        elif str.split(info_path, ".")[-1] == "gz":
-            self._info_path = info_path
+        elif str.split(info_file_path, ".")[-1] == "gz":
+            self._info_path = info_file_path
         else:
-            self._info_path = info_path + '/DALI_DATA_INFO.gz'
+            self._info_path = info_file_path + '/DALI_DATA_INFO.gz'
 
     @property
     def data_path(self):
@@ -127,7 +127,7 @@ class DALIDataset(Dataset):
         extract_file_extension = lambda x: x.split('.')[1]
         dali_ids = [extract_dali_id(file_name) for file_name \
                     in audio_files if extract_file_extension(file_name) == extension]
-        logging.info(f"dali ids extracted from the file system directory = {path}")
+        logging.info(f"dali ids extracted from the file system directory = {self._audio_file_pat}")
         return dali_ids
 
     def split_align_wav_transcripts(self, source_audio_path: str, destination_audio_path: str, extension: str = '.wav'):
@@ -151,4 +151,4 @@ class DALIDataset(Dataset):
                     extracted_audio_segment.export(destination_audio_path + extracted_audio_filename)
                     writer.writerow([dali_id, segment_start, segment_end, extracted_audio_filename, transcript])
                     logging.info(
-                        f"wav file saved at {destination_audio_path + extracted_audio_filename} and has transcription = {_transcript}")
+                        f"wav file saved at {destination_audio_path + extracted_audio_filename} and has transcription = {transcript}")
