@@ -14,7 +14,7 @@ def data_preparation(dali_dataset: DALIDataset) -> str:
     dali_dataset.get_dataset()
     dali_dataset.download_information()
     dali_audio_errors = dali_dataset.download_audio()
-    return f"completed with {len(dali_audio_errors)} errors}"
+    return f"completed with {len(dali_audio_errors)} errors"
 
 
 if __name__ == "__main__":
