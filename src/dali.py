@@ -5,11 +5,6 @@ import logging
 logging.basicConfig(filename='app.log', filemode='w', format='%(asctime)s - %(funcName)s - %(levelname)s - %(message)s', level=logging.INFO)
 
 if __name__ == '__main__':
-    # DALI_CONSTANTS = DataConstants(name = "Dali dataset",
-    #                            dataset_path = "/Users/macbook/PycharmProjects/songsLyricsGenerator/data/DALI_v1.0/",
-    #                            dataset_info_path = "/Users/macbook/PycharmProjects/songsLyricsGenerator/data/DALI_v1.0/info/dali_info.csv",
-    #                            dataset_metadata = "",
-    #                            dataset_cleaned_metadata = "")
 
     dali = DALIDataset(data_path= DataConstants)
     dali_dataset = dali.get_data()
