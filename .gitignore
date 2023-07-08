@@ -10,7 +10,6 @@
 /.idea/other.xml
 *.log
 *__pycache__
-/youtube_dl/__pycache__
 *.DS_Store
 /src/notebooks/4. Testing.ipynb
 /src/notebooks/.ipynb_checkpoints/4. Testing-checkpoint.ipynb
