@@ -1,4 +1,4 @@
-from base_dataset import Dataset
+from datasets.base_dataset import Dataset
 import DALI as dali_code
 import logging
 import pandas as pd
@@ -15,17 +15,17 @@ __all__ = ["DALIDataset"]
 
 class DALIDataset(Dataset):
 
-    def __init__(self, data_path: str, file_path: Optional[str] = None, info_path = Optional[str]):
+    def __init__(self, data_path: str, audio_file_path: Optional[str] = None, info_path = Optional[str]):
         
         if data_path is None:
             raise KeyError("Enter the value for data_path")
         else:
             self._data_path = data_path 
 
-        if file_path is None:
-            self._file_path = self._data_path + 'audio/'
+        if audio_file_path is None:
+            self._audio_file_path = self._data_path + 'audio/'
         else:
-            self._file_path = file_path
+            self._audio_file_path = audio_file_path
         
         if info_path is None:
             self._info_path = self._data_path + 'info/DALI_DATA_INFO.gz'
@@ -45,14 +45,14 @@ class DALIDataset(Dataset):
         self._data_path = data_path
 
     @property
-    def file_path(self):
-        logging.info("Returning the file_path")
-        return self._file_path
+    def audio_file_path(self):
+        logging.info("Returning the audio_file_path")
+        return self._audio_file_path
 
-    @file_path.setter
-    def file_path(self, file_path: str):
-        logging.info("Setting the file_path")
-        self._file_path = file_path
+    @audio_file_path.setter
+    def file_path(self, audio_file_path: str):
+        logging.info("Setting the audio_file_path")
+        self._audio_file_path = audio_file_path
     
 
     @property
@@ -67,7 +67,7 @@ class DALIDataset(Dataset):
 
 
     def get_dataset(self) -> Dict:
-        logging.info("Getting the data_path")
+        logging.info(f"Getting the data_path = {self._data_path}")
         if self._data_path is not None:
             dali_dataset = dali_code.get_the_DALI_dataset(self._data_path, skip=[], keep=[])
             logging.info(f"The DALI dataset has been downloaded")
@@ -91,7 +91,7 @@ class DALIDataset(Dataset):
 
     def download_information(self) -> None:
         dali_df = self.get_information()
-        logging.info(f"Downloading to the file path = {self._info_path}info/ ")
+        logging.info(f"Downloading to the info file path = {self._info_path}info/ ")
         dali_df.to_csv(self._info_path)
         logging.info(f"Download complete in the file path = {self._info_path}info/ ")
 
@@ -103,14 +103,14 @@ class DALIDataset(Dataset):
         This particular function returns the errors from where the Audio
         """
         logging.info("Downloading audio from youtube URLs associated with the information file")
-        if self._data_path is not None or self._file_path is not None:
+        if self._data_path is not None or self._audio_file_path is not None:
             dali_dataset_info = self.get_information()
-            errorred_dali_ids = dali_code.get_audio(dali_dataset_info, self._file_path, skip=[], keep=[])
+            errorred_dali_ids = dali_code.get_audio(dali_dataset_info, self._audio_file_path, skip=[], keep=[])
             logging.info(f"The DALI Audio download has {len(errorred_dali_ids)} errors in it")
             return errorred_dali_ids
         else:
-            raise TypeError(f"Set the data_path & file_path for the location of the DALI datasets; "
-                            f"data_path = {self._data_path}, file_path = {self._file_path}")
+            raise TypeError(f"Set the data_path & audio_file_path for the location of the DALI datasets; "
+                            f"data_path = {self._data_path}, audio_file_path = {self._audio_file_pathh}")
 
     def extract_dali_id_from_directory(self, path: str, extension: str) -> List[str]:
         wav_files = os.listdir(path)
