@@ -38,3 +38,4 @@
 /src/notebooks/songstolyrics_wav2vec/checkpoint-57000/training_args.bin
 /src/notebooks/songstolyrics_wav2vec/checkpoint-57500/training_args.bin
 /src/notebooks/songstolyrics_wav2vec_processor/vocab.json
+/src/notebooks/.ipynb_checkpoints/
