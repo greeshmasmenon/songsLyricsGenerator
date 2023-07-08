@@ -9,6 +9,8 @@
 /data/
 /.idea/other.xml
 *.log
+*__pycache__*
+*.DS_Store*
 /src/notebooks/4. Testing.ipynb
 /src/notebooks/.ipynb_checkpoints/4. Testing-checkpoint.ipynb
 /src/notebooks/songstolyrics_wav2vec/checkpoint-57000/config.json
