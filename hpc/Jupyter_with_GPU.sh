@@ -11,6 +11,7 @@ module purge || print_error_and_exit "No 'module' command"
 module load lang/Python
 source slg_env/bin/activate
 module load  vis/FFmpeg
+pip install pydub
 
 python /home/users/gmenon/workspace/songsLyricsGenerator/src/data_preparation.py
 
