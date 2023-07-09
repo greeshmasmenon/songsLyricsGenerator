@@ -41,3 +41,4 @@
 /src/notebooks/.ipynb_checkpoints/
 .vscode/*
 .ipynb_checkpoints/
+*.out
