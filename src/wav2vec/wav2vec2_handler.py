@@ -1,9 +1,9 @@
 import re
-import datasets
+import data
 from ftlangdetect import detect
 import pandas as pd
 import numpy as np
-from datasets import load_dataset, Dataset, Audio, load_metric, load_dataset, Metric
+from data import load_dataset, Dataset, Audio, load_metric, load_dataset, Metric
 import json
 from transformers import Wav2Vec2CTCTokenizer, Wav2Vec2FeatureExtractor, Wav2Vec2Processor
 from transformers import TrainingArguments, Trainer, Wav2Vec2ForCTC

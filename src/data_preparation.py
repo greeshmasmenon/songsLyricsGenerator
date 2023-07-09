@@ -1,4 +1,4 @@
-from datasets.dali_dataset import DALIDataset
+from data.dali_dataset import DALIDataset
 from constants.mir_constants import HPCDataConstants, MacDataConstants
 import logging
 

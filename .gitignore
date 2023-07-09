@@ -43,3 +43,6 @@
 .ipynb_checkpoints/
 *.out
 src/notebooks/data/
+src/data/
+src/model_artefacts/
+lightning_logs/
