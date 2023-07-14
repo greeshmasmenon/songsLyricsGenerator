@@ -4,7 +4,6 @@
 #SBATCH --ntasks-per-node=1
 #SBATCH -c 2   # Cores assigned to each tasks
 #SBATCH --time=0-10:00:00
-#SBATCH -p 
 
 print_error_and_exit() { echo "***ERROR*** $*"; exit 1; }
 module purge || print_error_and_exit "No 'module' command"
