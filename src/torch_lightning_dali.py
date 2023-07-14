@@ -10,8 +10,8 @@ from flash.core.data.utils import download_data
 datamodule = SpeechRecognitionData.from_csv(
     "file_name",
     "transcription",
-    train_file = "home/users/gmenon/notebooks/home/users/gmenon/notebooks/train_metadata_cleaned.csv",
-    validation_file = "home/users/gmenon/notebooks/home/users/gmenon/notebooks/validation_metadata_cleaned.csv",
+    train_file = "/home/users/gmenon/notebooks/home/users/gmenon/notebooks/train_metadata_cleaned.csv",
+    test_file = "/home/users/gmenon/notebooks/home/users/gmenon/notebooks/validation_metadata_cleaned.csv",
     batch_size = 4
 
 )
