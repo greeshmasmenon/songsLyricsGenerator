@@ -46,3 +46,4 @@ src/notebooks/data/
 src/data/
 src/model_artefacts/
 lightning_logs/
+model_artefacts/*
