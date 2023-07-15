@@ -30,7 +30,7 @@ model = SpeechRecognition(backbone="facebook/wav2vec2-base-960h")
 #model = SpeechRecognition(backbone="facebook/wav2vec2-large-960h-lv60-self")
 
 # 3. Create the trainer and finetune the model
-trainer = flash.Trainer(max_epochs=20, gpus=torch.cuda.device_count())
+trainer = flash.Trainer(accumulate_grad_batches=10,precision=16,max_epochs=20, gpus=torch.cuda.device_count())
 trainer.finetune(model, datamodule=datamodule, strategy="freeze")
 
 # 4. Predict on audio files!
