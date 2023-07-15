@@ -1,13 +1,11 @@
 #!/bin/bash -l
-
 #SBATCH -J SLG
-#SBATCH -N 2
-#SBATCH -G 8
-#SBATCH --ntasks-per-node=2
+#SBATCH -N 1
+#SBATCH -G 4
+#SBATCH --ntasks-per-node=1
 #SBATCH -c 2   # Cores assigned to each tasks
-#SBATCH --time=1-00:00:00
-#SBATCH --partition=gpu
-#SBATCH --qos=normal
+#SBATCH --time=0-10:00:00
+#SBATCH -p gpu
 
 print_error_and_exit() { echo "***ERROR*** $*"; exit 1; }
 module purge || print_error_and_exit "No 'module' command"
@@ -25,4 +23,7 @@ pip install 'lightning-flash[audio,text]'
 pip install --force-reinstall soundfile
 
 
-srun python /home/users/gmenon/workspace/songsLyricsGenerator/src/torch_lightning_dali.py
+python /home/users/gmenon/workspace/songsLyricsGenerator/src/torch_lightning_dali.py
+
+
+wait $pid
