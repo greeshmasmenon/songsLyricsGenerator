@@ -39,4 +39,4 @@ predictions = trainer.predict(model, datamodule=datamodule)
 print(predictions)
 
 # 5. Save the model!
-trainer.save_checkpoint("model_artefacts/speech_recognition_model.pt")
+trainer.save_checkpoint("model_artefacts/finetuned_ALT_model.pt")
