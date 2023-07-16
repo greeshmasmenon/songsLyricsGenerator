@@ -2,41 +2,81 @@ import flash
 import torch
 from flash.audio import SpeechRecognition, SpeechRecognitionData
 from flash.core.data.utils import download_data
+import pandas as pd
+from dataclasses import dataclass
 
-# 1. Create the DataModule
-# download_data("https://pl-flash-data.s3.amazonaws.com/timit_data.zip", "./data")
+
+@dataclass
+class training_args():
+    TRAIN_FILE_PATH: str = "/home/users/gmenon/notebooks/home/users/gmenon/notebooks/train_metadata_cleaned.csv"
+    TEST_FILE_PATH: str = "/home/users/gmenon/notebooks/home/users/gmenon/notebooks/validation_metadata_cleaned.csv"
+    MODEL_BACKBONE: str = "facebook/wav2vec2-base-960h"
+    # MODEL_BACKBONE =  "openai/whisper-medium", #English only
+    # MODEL_BACKBONE =  "openai/whisper-large-v2" #All languages
+    BATCH_SIZE: int = 8
+    NUM_EPOCHS: int = 2
+    NUM_GPUS = torch.cuda.device_count()
+    MODEL_SAVE_PATH: str = "model_artefacts/finetuned_ALT_model.pt"
+    FINETUNE_STRATEGY: str = "freeze"
+
+
+whisper_args = training_args(MODEL_BACKBONE = "openai/whisper-medium",
+                             MODEL_SAVE_PATH = "model_artefacts/whisper_finetuned_model.pt")
+
+wav2vec2_args = training_args(MODEL_SAVE_PATH = "model_artefacts/wav2vec2_finetuned_model.pt")
+
+
+# Dataset
+
+print(f"Shape of the training file is {str(pd.read_csv(training_args.TRAIN_FILE_PATH).shape)}")
+print(f"Shape of the validation files is {str(pd.read_csv(training_args.TEST_FILE_PATH).shape)}")
 
 
 datamodule = SpeechRecognitionData.from_csv(
     "file_name",
     "transcription",
-    train_file = "/home/users/gmenon/notebooks/home/users/gmenon/notebooks/train_metadata_cleaned.csv",
-    test_file = "/home/users/gmenon/notebooks/home/users/gmenon/notebooks/validation_metadata_cleaned.csv",
-    batch_size = 2
-
+    train_file = training_args.TRAIN_FILE_PATH,
+    test_file = training_args.TEST_FILE_PATH,
+    batch_size = training_args.BATCH_SIZE
 )
 
-# datamodule = SpeechRecognitionData.from_json(
-#     "file",
-#     "text",
-#     train_file="data/timit/train.json",
-#     test_file="data/timit/test.json",
-#     batch_size=4,
-# )
+# Wav2Vec2.0
+wav2vec2_model = SpeechRecognition(backbone=wav2vec2_args.MODEL_BACKBONE, MODEL_SAVE_PATH = wav2vec2_args.MODEL_SAVE_PATH)
+# Create the trainer and finetune the model
+wav2vec2_trainer = flash.Trainer(accumulate_grad_batches=10,
+                        precision=16,
+                        max_epochs=wav2vec2_args.NUM_EPOCHS, 
+                        gpus=wav2vec2_args.NUM_GPUS)
 
-
-# 2. Build the task
-model = SpeechRecognition(backbone="facebook/wav2vec2-base-960h")
-#model = SpeechRecognition(backbone="facebook/wav2vec2-large-960h-lv60-self")
-
-# 3. Create the trainer and finetune the model
-trainer = flash.Trainer(accumulate_grad_batches=10,precision=16,max_epochs=20, gpus=torch.cuda.device_count())
-trainer.finetune(model, datamodule=datamodule, strategy="freeze")
-
-# 4. Predict on audio files!
-datamodule = SpeechRecognitionData.from_files(predict_files=["/home/users/gmenon/dali/DALI_v1.0/audio/wav_clips/48f4a0fa25b84e01ac6ff451d493bf74.wav"], batch_size=4)
-predictions = trainer.predict(model, datamodule=datamodule)
-print(predictions)
+wav2vec2_trainer.finetune(wav2vec2_model,
+                 datamodule=datamodule, 
+                 strategy=wav2vec2_args.FINETUNE_STRATEGY)
 
 # 5. Save the model!
-trainer.save_checkpoint("model_artefacts/finetuned_ALT_model.pt")
+wav2vec2_trainer.save_checkpoint(wav2vec2_args.MODEL_SAVE_PATH)
+
+
+# 2. Build the Whisper Task
+whisper_model = SpeechRecognition(backbone=whisper_args.MODEL_BACKBONE, 
+                          MODEL_SAVE_PATH = whisper_args.MODEL_SAVE_PATH)
+
+# 3. Create the trainer and finetune the model
+whisper_trainer = flash.Trainer(accumulate_grad_batches=10, precision=16, max_epochs=whisper_args.NUM_EPOCHS,
+                        gpus=whisper_args.NUM_GPUS)
+
+whisper_trainer.finetune(whisper_model, datamodule=datamodule, strategy=whisper_args.FINETUNE_STRATEGY)
+
+# 5. Save the model!
+whisper_trainer.save_checkpoint(whisper_args.MODEL_SAVE_PATH)
+
+
+# 4. Predict on audio files!
+test_datamodule = SpeechRecognitionData.from_files(predict_files=["/home/users/gmenon/workspace/songsLyricsGenerator/test_clip.wav"], 
+                                              batch_size=training_args.BATCH_SIZE)
+
+wav2vec2_predictions = wav2vec2_trainer.predict(wav2vec2_model, datamodule=test_datamodule)
+print(wav2vec2_predictions)
+
+
+whisper_predictions = whisper_trainer.predict(whisper_model, datamodule=test_datamodule)
+print(whisper_predictions)
