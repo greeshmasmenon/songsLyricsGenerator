@@ -41,8 +41,10 @@ datamodule = SpeechRecognitionData.from_csv(
 )
 
 # Wav2Vec2.0
-wav2vec2_model = SpeechRecognition(backbone=wav2vec2_args.MODEL_BACKBONE, MODEL_SAVE_PATH = wav2vec2_args.MODEL_SAVE_PATH)
-# Create the trainer and finetune the model
+wav2vec2_model = SpeechRecognition(backbone=wav2vec2_args.MODEL_BACKBONE, 
+                                   MODEL_SAVE_PATH = wav2vec2_args.MODEL_SAVE_PATH)
+
+# Create the trainer, finetune and save the model
 wav2vec2_trainer = flash.Trainer(accumulate_grad_batches=10,
                         precision=16,
                         max_epochs=wav2vec2_args.NUM_EPOCHS, 
@@ -52,31 +54,36 @@ wav2vec2_trainer.finetune(wav2vec2_model,
                  datamodule=datamodule, 
                  strategy=wav2vec2_args.FINETUNE_STRATEGY)
 
-# 5. Save the model!
 wav2vec2_trainer.save_checkpoint(wav2vec2_args.MODEL_SAVE_PATH)
 
 
-# 2. Build the Whisper Task
+# Whisper 
 whisper_model = SpeechRecognition(backbone=whisper_args.MODEL_BACKBONE, 
                           MODEL_SAVE_PATH = whisper_args.MODEL_SAVE_PATH)
 
-# 3. Create the trainer and finetune the model
-whisper_trainer = flash.Trainer(accumulate_grad_batches=10, precision=16, max_epochs=whisper_args.NUM_EPOCHS,
-                        gpus=whisper_args.NUM_GPUS)
+# Create the trainer, finetune and save the model
+whisper_trainer = flash.Trainer(accumulate_grad_batches=10,
+                                precision=16, 
+                                max_epochs=whisper_args.NUM_EPOCHS,
+                                gpus=whisper_args.NUM_GPUS)
 
-whisper_trainer.finetune(whisper_model, datamodule=datamodule, strategy=whisper_args.FINETUNE_STRATEGY)
+whisper_trainer.finetune(whisper_model, datamodule=datamodule, 
+                         strategy=whisper_args.FINETUNE_STRATEGY)
 
-# 5. Save the model!
 whisper_trainer.save_checkpoint(whisper_args.MODEL_SAVE_PATH)
 
 
 # 4. Predict on audio files!
-test_datamodule = SpeechRecognitionData.from_files(predict_files=["/home/users/gmenon/workspace/songsLyricsGenerator/test_clip.wav"], 
-                                              batch_size=training_args.BATCH_SIZE)
+test_datamodule = SpeechRecognitionData.from_files(
+    predict_files=["/home/users/gmenon/workspace/songsLyricsGenerator/test_clip.wav"], 
+    batch_size=training_args.BATCH_SIZE)
 
-wav2vec2_predictions = wav2vec2_trainer.predict(wav2vec2_model, datamodule=test_datamodule)
+wav2vec2_predictions = wav2vec2_trainer.predict(wav2vec2_model, 
+                                                datamodule=test_datamodule)
+
+print("Wav2vec2 predictions ")
 print(wav2vec2_predictions)
 
-
+print("Whisper predictions ")
 whisper_predictions = whisper_trainer.predict(whisper_model, datamodule=test_datamodule)
 print(whisper_predictions)

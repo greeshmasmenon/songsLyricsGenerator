@@ -5,7 +5,7 @@
 #SBATCH -G 8
 #SBATCH --ntasks-per-node=2
 #SBATCH -c 2   # Cores assigned to each tasks
-#SBATCH --time=0-01:00:00
+#SBATCH --time=1-00:00:00
 #SBATCH --partition=gpu
 #SBATCH --qos=normal
 
