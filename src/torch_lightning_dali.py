@@ -41,8 +41,7 @@ datamodule = SpeechRecognitionData.from_csv(
 )
 
 # Wav2Vec2.0
-wav2vec2_model = SpeechRecognition(backbone=wav2vec2_args.MODEL_BACKBONE, 
-                                   MODEL_SAVE_PATH = wav2vec2_args.MODEL_SAVE_PATH)
+wav2vec2_model = SpeechRecognition(backbone=wav2vec2_args.MODEL_BACKBONE)
 
 # Create the trainer, finetune and save the model
 wav2vec2_trainer = flash.Trainer(accumulate_grad_batches=10,
@@ -58,8 +57,7 @@ wav2vec2_trainer.save_checkpoint(wav2vec2_args.MODEL_SAVE_PATH)
 
 
 # Whisper 
-whisper_model = SpeechRecognition(backbone=whisper_args.MODEL_BACKBONE, 
-                          MODEL_SAVE_PATH = whisper_args.MODEL_SAVE_PATH)
+whisper_model = SpeechRecognition(backbone=whisper_args.MODEL_BACKBONE)
 
 # Create the trainer, finetune and save the model
 whisper_trainer = flash.Trainer(accumulate_grad_batches=10,
