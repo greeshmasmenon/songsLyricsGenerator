@@ -1,9 +1,10 @@
 from abc import ABC
-from constants.mir_constants import training_args
+from constants.mir_constants import TrainingArgs
 from dataclasses import dataclass
 
+
 class SpeechModel(ABC):
-    def __init__(self, args: training_args) -> None:
+    def __init__(self, args: TrainingArgs) -> None:
         self.training_args = args
 
     def load_data(self):

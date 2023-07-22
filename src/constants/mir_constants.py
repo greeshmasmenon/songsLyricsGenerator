@@ -1,7 +1,8 @@
 from dataclasses import dataclass
 import torch
 
-@dataclass(frozen = True)
+
+@dataclass(frozen=True)
 class HPCDataConstants:
     """constants for the use within the Songs to Lyrics generation"""
     NAME: str = "Dali Dataset"
@@ -13,7 +14,7 @@ class HPCDataConstants:
     DATASET_CLEANED_METADATA: str = ""
 
 
-@dataclass(frozen = True)
+@dataclass(frozen=True)
 class MacDataConstants:
     """constants for the use within the Songs to Lyrics generation"""
     NAME: str = "Dali Dataset"
@@ -26,7 +27,7 @@ class MacDataConstants:
 
 
 @dataclass
-class training_args():
+class TrainingArgs:
     TRAIN_FILE_PATH: str = "/home/users/gmenon/notebooks/home/users/gmenon/notebooks/train_metadata_cleaned.csv"
     TEST_FILE_PATH: str = "/home/users/gmenon/notebooks/home/users/gmenon/notebooks/validation_metadata_cleaned.csv"
     MODEL_BACKBONE: str = "facebook/wav2vec2-base-960h"
@@ -35,6 +36,11 @@ class training_args():
     NUM_GPUS = torch.cuda.device_count()
     MODEL_SAVE_PATH: str = "model_artefacts/finetuned_ALT_model.pt"
     FINETUNE_STRATEGY: str = "freeze"
+    ACCUMULATE_GRAD_BATCHES = 10
+    PRECISION = 16
+    MAX_EPOCHS = 10
 
 
-WAV2VEC2_ARGS = training_args(MODEL_SAVE_PATH = "/home/users/gmenon/workspace/songsLyricsGenerator/src/model_artefacts/wav2vec2_finetuned_model.pt")
+WAV2VEC2_ARGS = TrainingArgs(MODEL_BACKBONE="facebook/wav2vec2-large-960h-lv60-self",
+                              MODEL_SAVE_PATH="/home/users/gmenon/workspace/songsLyricsGenerator/src/model_artefacts/wav2vec2_finetuned_model.pt"
+                              )
