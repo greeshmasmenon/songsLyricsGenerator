@@ -48,8 +48,8 @@ class Wav2Vec2SpeechRecognition(SpeechModel):
     
 
     def shape(self) -> Dict:
-        return { "training": pd.read_csv(self.WAV2VEC2_ARGS.TRAIN_FILE_PATH)),
-                 "validation" : pd.read_csv(self.WAV2VEC2_ARGS.TEST_FILE_PATH)) }
+        return { "training": pd.read_csv(self.WAV2VEC2_ARGS.TRAIN_FILE_PATH).shape,
+                 "validation" : pd.read_csv(self.WAV2VEC2_ARGS.TEST_FILE_PATH).shape }
 
     def finetune(self):
         self.wav2vec2_trainer.finetune(self.wav2vec2_model,
