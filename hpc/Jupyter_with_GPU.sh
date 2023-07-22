@@ -1,11 +1,13 @@
 #!/bin/bash -l
 #SBATCH -J SLG
 #SBATCH -N 1
-#SBATCH -G 4
+#SBATCH -G 1
 #SBATCH --ntasks-per-node=1
 #SBATCH -c 2   # Cores assigned to each tasks
 #SBATCH --time=0-10:00:00
 #SBATCH -p gpu
+#SBATCH -A students
+#SBATCH --qos normal
 
 print_error_and_exit() { echo "***ERROR*** $*"; exit 1; }
 module purge || print_error_and_exit "No 'module' command"

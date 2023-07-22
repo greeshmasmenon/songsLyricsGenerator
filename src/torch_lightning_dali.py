@@ -1,10 +1,9 @@
 import flash
 import torch
 from flash.audio import SpeechRecognition, SpeechRecognitionData
-from flash.core.data.utils import download_data
+# from flash.core.data.utils import download_data
 import pandas as pd
 from dataclasses import dataclass
-
 
 @dataclass
 class training_args():
@@ -13,8 +12,8 @@ class training_args():
     MODEL_BACKBONE: str = "facebook/wav2vec2-base-960h"
     # MODEL_BACKBONE =  "openai/whisper-medium", #English only
     # MODEL_BACKBONE =  "openai/whisper-large-v2" #All languages
-    BATCH_SIZE: int = 8
-    NUM_EPOCHS: int = 2
+    BATCH_SIZE: int = 2
+    NUM_EPOCHS: int = 20
     NUM_GPUS = torch.cuda.device_count()
     MODEL_SAVE_PATH: str = "model_artefacts/finetuned_ALT_model.pt"
     FINETUNE_STRATEGY: str = "freeze"
