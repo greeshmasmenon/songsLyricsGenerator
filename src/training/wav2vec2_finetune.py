@@ -19,7 +19,6 @@ class Wav2Vec2SpeechRecognition(SpeechModel):
                                               max_epochs=self.WAV2VEC2_ARGS.MAX_EPOCHS,
                                               gpus=self.WAV2VEC2_ARGS.NUM_GPUS
                                               )
-        self.wav2vec2_model = None
         self.datamodule = SpeechRecognitionData.from_csv("file_name",
                                                          "transcription",
                                                          train_file=self.WAV2VEC2_ARGS.TRAIN_FILE_PATH,
@@ -36,7 +35,7 @@ class Wav2Vec2SpeechRecognition(SpeechModel):
                 accumulate_grad_batches: int,
                 precision: int,
                 max_epochs: int,
-                gpus: int) -> None:
+                gpus: int):
         self.wav2vec2_trainer = flash.Trainer(accumulate_grad_batches=accumulate_grad_batches,
                                               precision=precision,
                                               max_epochs=max_epochs,

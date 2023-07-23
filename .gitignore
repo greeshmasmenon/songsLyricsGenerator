@@ -47,3 +47,4 @@ src/data/
 src/model_artefacts/
 lightning_logs/
 model_artefacts/*
+whisper-small-es/*

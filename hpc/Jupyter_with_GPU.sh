@@ -1,13 +1,16 @@
 #!/bin/bash -l
 #SBATCH -J SLG
-#SBATCH -N 1
-#SBATCH -G 1
+#SBATCH -N 2
+#SBATCH -G 7
 #SBATCH --ntasks-per-node=1
 #SBATCH -c 2   # Cores assigned to each tasks
 #SBATCH --time=0-10:00:00
 #SBATCH -p gpu
-#SBATCH -A students
+#SBATCH -A Christoph.Schommer
 #SBATCH --qos normal
+#SBATCH --mail-type=all
+#SBATCH --mail-user=greeshmaseetharaman@gmail.com
+
 
 print_error_and_exit() { echo "***ERROR*** $*"; exit 1; }
 module purge || print_error_and_exit "No 'module' command"

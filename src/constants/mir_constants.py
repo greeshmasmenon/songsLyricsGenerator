@@ -36,7 +36,7 @@ class TrainingArgs:
     NUM_GPUS = torch.cuda.device_count()
     MODEL_SAVE_PATH: str = "model_artefacts/finetuned_ALT_model.pt"
     FINETUNE_STRATEGY: str = "freeze"
-    ACCUMULATE_GRAD_BATCHES = 10
+    ACCUMULATE_GRAD_BATCHES = 2
     PRECISION = 16
     MAX_EPOCHS = 10
 
