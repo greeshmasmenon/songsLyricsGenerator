@@ -50,3 +50,4 @@ model_artefacts/*
 /src/whisper-small-es/
 /.idea/*
 whisper-small-es
+workspace/songsLyricsGenerator/experiments/
