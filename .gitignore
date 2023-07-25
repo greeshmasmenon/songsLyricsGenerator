@@ -49,3 +49,4 @@ lightning_logs/
 model_artefacts/*
 /src/whisper-small-es/
 /.idea/*
+whisper-small-es
