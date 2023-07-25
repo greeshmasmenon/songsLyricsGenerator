@@ -48,3 +48,4 @@ src/model_artefacts/
 lightning_logs/
 model_artefacts/*
 /src/whisper-small-es/
+/.idea/*
