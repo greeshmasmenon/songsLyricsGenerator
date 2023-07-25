@@ -1,6 +1,7 @@
 from dataclasses import dataclass
 import torch
 
+CHARS_TO_REMOVE_FROM_TRANSCRIPTS = '[\,\?\.\!\-\;\:\"\%\$\&\^\*\@\#\<\>\/\+\\=\_\\}\{\)\(\]\[\`1234567890]'
 
 @dataclass(frozen=True)
 class HPCDataConstants:
