@@ -1,8 +1,8 @@
 #!/bin/bash -l
 #SBATCH -J SLG
-#SBATCH -N 1
+#SBATCH -N 3
 #SBATCH --ntasks-per-node=1
-#SBATCH -c 2   # Cores assigned to each tasks
+#SBATCH -c 10   # Cores assigned to each tasks
 #SBATCH --time=0-10:00:00
 
 print_error_and_exit() { echo "***ERROR*** $*"; exit 1; }

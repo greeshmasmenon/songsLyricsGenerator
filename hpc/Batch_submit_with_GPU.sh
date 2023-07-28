@@ -4,7 +4,8 @@
 #SBATCH -G 8
 #SBATCH --ntasks-per-node=2
 #SBATCH -c 2   # Cores assigned to each tasks
-#SBATCH --time=1-00:00:00
+#SBATCH -C volta32
+#SBATCH --time=0-4:00:00
 #SBATCH --partition=gpu
 #SBATCH --mail-type=all
 #SBATCH --mail-user=greeshmaseetharaman@gmail.com

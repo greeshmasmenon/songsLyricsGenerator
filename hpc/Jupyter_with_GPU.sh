@@ -1,10 +1,10 @@
 #!/bin/bash -l
 #SBATCH -J SLG
 #SBATCH -N 2
-#SBATCH -G 7
-#SBATCH --ntasks-per-node=1
+#SBATCH -G 6
+#SBATCH --ntasks-per-node=2
 #SBATCH -c 2   # Cores assigned to each tasks
-#SBATCH --time=0-24:00:00
+#SBATCH --time=0-6:00:00
 #SBATCH -p gpu
 #SBATCH -A Christoph.Schommer
 #SBATCH --qos normal
@@ -18,6 +18,7 @@ module purge || print_error_and_exit "No 'module' command"
 module load lang/Python
 source slg_env/bin/activate
 module load  vis/FFmpeg
+
 
 jupyter notebook --ip $(hostname -i) --no-browser  & pid=$!
 sleep 5s

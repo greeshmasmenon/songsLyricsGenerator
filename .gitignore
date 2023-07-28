@@ -53,3 +53,7 @@ whisper-small-es
 experiments/
 wandb/
 src/model
+src/model_artefacts_debug/*
+src/notebooks/whisper-small-dali/*
+src/notebooks/=2.6.1
+src/notebooks/=0.30
