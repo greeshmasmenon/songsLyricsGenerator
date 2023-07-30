@@ -1,3 +1,3 @@
-import utils
+from utils.csv_utils import CsvWriter
 
-__all__ = ["csv_utils"]
+__all__ = ["CsvWriter"]
