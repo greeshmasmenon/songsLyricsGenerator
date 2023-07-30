@@ -5,6 +5,9 @@ from training.basetrainer import SpeechModel
 from constants.mir_constants import TrainingArgs
 from typing import List
 from typing import Dict
+from pytorch_lightning.loggers import WandbLogger
+#from pytorch_lightning.callbacks import ModelCheckpoint
+
 
 __all__ = ["Wav2Vec2SpeechRecognition"]
 
@@ -12,12 +15,14 @@ __all__ = ["Wav2Vec2SpeechRecognition"]
 class Wav2Vec2SpeechRecognition(SpeechModel):
     def __init__(self, wav2vec2_args: TrainingArgs) -> None:
         super().__init__(wav2vec2_args)
-        self.WAV2VEC2_ARGS = self.training_args
-        self.wav2vec2_model = SpeechRecognition(backbone=self.WAV2VEC2_ARGS.MODEL_BACKBONE)
+        self.wandb_logger = WandbLogger(project="SLG - wav2vec2 finetuning", log_model="all")
+        self.WAV2VEC2_ARGS = wav2vec2_args
+        self.wav2vec2_model = SpeechRecognition(backbone=self.WAV2VEC2_ARGS.MODEL_BACKBONE,learning_rate=1e-5)
         self.wav2vec2_trainer = flash.Trainer(accumulate_grad_batches=self.WAV2VEC2_ARGS.ACCUMULATE_GRAD_BATCHES,
                                               precision=self.WAV2VEC2_ARGS.PRECISION,
                                               max_epochs=self.WAV2VEC2_ARGS.MAX_EPOCHS,
-                                              gpus=self.WAV2VEC2_ARGS.NUM_GPUS
+                                              gpus=self.WAV2VEC2_ARGS.NUM_GPUS,
+                                              num_nodes = self.WAV2VEC2_ARGS.NUM_NODES
                                               )
         self.datamodule = SpeechRecognitionData.from_csv("file_name",
                                                          "transcription",
@@ -25,7 +30,7 @@ class Wav2Vec2SpeechRecognition(SpeechModel):
                                                          test_file=self.WAV2VEC2_ARGS.TEST_FILE_PATH,
                                                          batch_size=self.WAV2VEC2_ARGS.BATCH_SIZE
                                                          )
-
+        
     @property
     def trainer(self) -> flash.Trainer:
         return self.wav2vec2_trainer
@@ -35,11 +40,15 @@ class Wav2Vec2SpeechRecognition(SpeechModel):
                 accumulate_grad_batches: int,
                 precision: int,
                 max_epochs: int,
-                gpus: int):
+                gpus: int,
+                num_nodes:int,
+                logger: WandbLogger):
         self.wav2vec2_trainer = flash.Trainer(accumulate_grad_batches=accumulate_grad_batches,
                                               precision=precision,
                                               max_epochs=max_epochs,
-                                              gpus=gpus
+                                              gpus=gpus,   
+                                              num_nodes=num_nodes,
+                                              logger =self.wandb_logger
                                               )
 
     @property
@@ -59,6 +68,7 @@ class Wav2Vec2SpeechRecognition(SpeechModel):
                                        datamodule=self.datamodule,
                                        strategy=self.WAV2VEC2_ARGS.FINETUNE_STRATEGY)
         self.wav2vec2_trainer.save_checkpoint(self.WAV2VEC2_ARGS.MODEL_SAVE_PATH)
+        
     @staticmethod
     def inference(inference_files: List[str], batch_size: int, model_path: str, wav2vec2_trainer):
         model = SpeechRecognition.load_from_checkpoint(model_path)
