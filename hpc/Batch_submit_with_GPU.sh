@@ -1,12 +1,13 @@
 #!/bin/bash -l
 #SBATCH -J SLG 
-#SBATCH -N 2
-#SBATCH -G 8
+#SBATCH -N 1
+#SBATCH -G 1
 #SBATCH --ntasks-per-node=1
 #SBATCH -c 1   # Cores assigned to each tasks
 #SBATCH --qos normal
 #SBATCH --time=0-4:00:00
 #SBATCH --partition=gpu
+#SBATCH -A Christoph.Schommer
 #SBATCH --mail-type=all
 #SBATCH --mail-user=greeshmaseetharaman@gmail.com
 
@@ -31,6 +32,7 @@ pip install --force-reinstall soundfile
 pip install datasets, transformers, 
 pip install dali-dataset
 pip install wandb
+pip install jiwer
 
 
 srun python /home/users/gmenon/workspace/songsLyricsGenerator/src/wav2vec2_training.py

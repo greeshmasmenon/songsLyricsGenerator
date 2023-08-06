@@ -39,12 +39,24 @@ class TrainingArgs:
     FINETUNE_STRATEGY: str = "freeze"
     ACCUMULATE_GRAD_BATCHES = 16
     PRECISION = 16
-    MAX_EPOCHS = 5
-    NUM_NODES = 2
+    MAX_EPOCHS = 10
+    NUM_NODES = 1
 
 
-WAV2VEC2_ARGS = TrainingArgs(MODEL_BACKBONE="facebook/wav2vec2-large-960h-lv60-self",
-                              MODEL_SAVE_PATH="/home/users/gmenon/workspace/songsLyricsGenerator/src/model_artefacts/wav2vec2_finetuned_model.pt",
+WAV2VEC2_ARGS = TrainingArgs(MODEL_BACKBONE="facebook/wav2vec2-large-960h-lv60-self", #"facebook/wav2vec2-large-robust-ft-libri-960h"
+                             TRAIN_FILE_PATH = "/home/users/gmenon/notebooks/home/users/gmenon/notebooks/train_song_metadata_en_demucs_cleaned.csv",
+                             TEST_FILE_PATH = "/home/users/gmenon/notebooks/home/users/gmenon/notebooks/validation_song_metadata_en_demucs_cleaned.csv",
+                              MODEL_SAVE_PATH="/home/users/gmenon/workspace/songsLyricsGenerator/src/model_artefacts/wav2vec2_demucs_en_finetuned_model.pt",
                               BATCH_SIZE = 1,
-                              NUM_EPOCHS = 4
+                              NUM_EPOCHS = 10,
+                              FINETUNE_STRATEGY = "no_freeze_deepspeed"
                               )
+
+
+# WAV2VEC2_ARGS = TrainingArgs(MODEL_BACKBONE="facebook/wav2vec2-base-960h",
+#                              TRAIN_FILE_PATH = "/home/users/gmenon/notebooks/home/users/gmenon/notebooks/train_song_metadata_en_demucs_cleaned.csv",
+#                              TEST_FILE_PATH = "/home/users/gmenon/notebooks/home/users/gmenon/notebooks/validation_song_metadata_en_demucs_cleaned.csv",
+#                               MODEL_SAVE_PATH="/home/users/gmenon/workspace/songsLyricsGenerator/src/model_artefacts/wav2vec2_demucs_en_finetuned_base_model.pt",
+#                               BATCH_SIZE = 1,
+#                               NUM_EPOCHS = 4
+#                               )
