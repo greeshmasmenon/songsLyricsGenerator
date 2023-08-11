@@ -41,6 +41,7 @@ class TrainingArgs:
     PRECISION = 16
     MAX_EPOCHS = 10
     NUM_NODES = 1
+    CHARS_TO_REMOVE_FROM_TRANSCRIPTS = '[\,\?\.\!\-\;\:\"\%\$\&\^\*\@\#\<\>\/\+\\=\_\\}\{\)\(\]\[\`1234567890]'
 
 
 WAV2VEC2_ARGS = TrainingArgs(MODEL_BACKBONE="facebook/wav2vec2-large-960h-lv60-self", #"facebook/wav2vec2-large-robust-ft-libri-960h"

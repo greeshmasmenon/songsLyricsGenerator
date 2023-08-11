@@ -1,6 +1,7 @@
-from abc import ABC
+from flash.audio import SpeechRecognition
 from constants.mir_constants import TrainingArgs
 from dataclasses import dataclass
+from abc import ABC
 
 
 class SpeechModel(ABC):

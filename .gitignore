@@ -58,3 +58,7 @@ src/notebooks/whisper-small-dali/*
 src/notebooks/=2.6.1
 src/notebooks/=0.30
 slg_wav2vec2/*
+ctcdecode/
+src/kenlm/
+slg_demucs/
+hpc/slg_wav2vec2/
