@@ -1,0 +1,42 @@
+\documentclass[11pt,twoside,a4paper,openright]{book}
+
+\usepackage[utf8]{inputenc}
+\usepackage[T1]{fontenc}
+\usepackage[english]{babel}
+\usepackage{xcolor}
+\usepackage{float}
+\usepackage{csquotes}
+
+\usepackage{biblatex} %Imports biblatex package
+\addbibresource{references.bib} %Import the bibliography file
+
+\usepackage{graphicx}
+
+\usepackage[margin=2.9cm,inner=3.4cm]{geometry} 
+
+\begin{document}
+\frontmatter
+
+\input{00-frontmatter/titlepage.tex}
+
+\pagenumbering{arabic}
+
+\tableofcontents
+\listoffigures
+\listoftables
+
+\input{01-introduction/01-introduction.tex}
+
+\input{02-fundamentals/02-fundamentals.tex}
+
+\input{03-researchfoundations/03-research-foundations.tex}
+
+\input{04-research-study/04-research-study.tex}
+
+\input{05-conclusion/05-conclusion.tex}
+
+\input{95-Appendix/95-appendix.tex}
+
+\printbibliography %Prints bibliography
+
+\end{document}

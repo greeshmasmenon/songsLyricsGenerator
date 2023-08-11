@@ -1,0 +1,70 @@
+%! TEX root = thesis.tex
+
+\chapter{Introduction}%
+%\chapter{Einleitung}
+\label{sec:introduction}
+
+\section{Motivation}%
+\label{sec:motivation}
+
+In today’s world, listening to music and songs is a common recreational activity for millions of people across the world. According to studies conducted \cite{salimpoor2011anatomically}, listening to songs helps us to regulate our mood through the release of dopamine, making us happier and satisfied. While in the past, music was heard through gramophones, music boxes or radio devices, the main mechanism of audio consumption today is through the digital medium and specifically through audio streaming applications such as Spotify, Apple Music, YouTube etc. The largest such platform, Spotify has over 11 million creators producing over 100 million songs to over 551 million users \cite{Spotify_2023} . One of the most popular ways for users to engage with music is through singing along with the music by reading the lyrics of the songs. While the total number of songs in just one major platform is over 100 million, there are only 8 million songs with the world’s largest lyrics provider \cite{musixmatch_2023}. Also, the lyrics are human transcribed today and the quality varies considering that the lyrics are crowd-sourced from different volunteers and experts.
+
+\begin{figure}
+    \centering
+    \includegraphics[width=0.4\textwidth]{01-introduction/figures/spotify_lyrics.pdf}
+    \includegraphics[width=0.2\textwidth]{01-introduction/figures/applemusic_lyrics.pdf}
+    \caption{Lyrics within Audio Streaming Applications - Spotify and Apple Music}%
+    \label{fig:setup0}
+\end{figure}
+
+With the advances in the space of deep learning, cloud computing and improved compute and storage prowess, we are today at the cusp of being able to generate machine transcribed song lyrics. The commercial space is lacking good products that can transcribe songs, with all the commercial entities still using expert or human transcription. Similarly, latest advances in the space of Automatic Speech Recognition (ASR) with the advent of the Whisper and the Wav2Vec2.0 models, Acoustic Models such as Hidden Markov Model (HMM) and Music Information Retrieval (MIR) growing as a field for identifying singer, instruments etc. make it an interesting problem to solve. Additionally, considering the long tail of songs without any available lyrics, high cost of obtaining lyrics and the lack of consistent quality amongst available lyrics, there is a great deal of interest in being able to provide high quality, machine transcribed song lyrics. 
+
+While the problem statement is interesting, solving the problem of transcribing songs to lyrics is a notoriously difficult problem to solve \textcolor{red}{[x][y][z]} . The reason is that in addition to all the challenges faced by speech recognition, there is also an additional presence of noise in the form of accompanied instruments or through the stretching or contraction of words by the singer to generate musical effect. As a result, current benchmarks in this nascent space of song lyrics transcription have poor associated evaluation metrics when compared with pure speech.
+
+The aim of this thesis is to come up with an improved Songs Lyrics Transcription solution that can be obtained by applying a mixture of state of the art techniques and custom improvements in the space of Automated Speech Recognition (ASR), Audio Signal Processing and Music Information Retrieval (MIR).
+
+\section{Related Work}
+\label{sec:relatedwork}
+
+Song lyrics transcription is a relatively new field with very little research done in this domain \cite{gao2022automatic}. This domain can be viewed as a co-mingling of three different domains that have overlapping research and application. The three domains include Music Information Retrieval (MIR), Automatic Speech Recognition (ASR) and Acoustic Modelling (AM). In ASR, the core problem is in the speech domain and the goal is to be able to transcribe spoken speech into the text associated with the speech. A more technical definition is given by Jurafsky \cite{jurafsky2000speech} , where he defines ASR as the building of a system for mapping acoustic signals to a string of words \cite{jurafsky2000speech} . Some of the challenges in ASR  \cite{forsberg2003speech} are the lack of body language for the computer to read, differing accents and pronunciations, difference in spoken and written language etc. Automatic Speech Recognition (ASR) has potential applications in the space of dictation, transcription, voice assistants, searching audio files for particular words etc. Acoustic modelling (AM) of speech typically refers to the process of establishing statistical representations for the feature vector sequences computed from the speech waveform \cite{karpagavalli2016review}. Through acoustic modelling techniques such as using Hidden Markov Models (HMM), ASR has been performed by leveraging decoding techniques based on decoding concatenated text or phonemes. HMMs lie at the heart of the modern ASR systems and while deep learning models have brought significant improvements to the acoustic modelling part, the ASR systems themselves have not changed much \cite{gales2008application}. Music Information Retrieval (MIR) is the domain that is historically concerned with the extraction and inference of meaningful features from music (audio signal), symbolic representations of music, indexation of music for retrieval or recommendation purposes. 
+
+
+\begin{figure}[H]
+    \centering
+    \includegraphics[width=\textwidth]{01-introduction/figures/between_three_domains.pdf}
+    \caption{Song Lyrics Transcription as an intersection of multiple domains}%
+    \label{fig:setup1}
+\end{figure}
+
+To understand the beginnings, ASR models started in the 1970s in Carnegie Mellon and IBM who introduced the use of discrete density HMMs and then later at Bell Labs where continuous density HMMs were introduced. Initially, discrete word speaker dependent large vocabulary models or whole word small vocabulary speaker independent applications were the capability in this field. However, in the early 90s, with the artificial 1000 word Resource Management task, the capability for continuous speaker-independent recognition was built. Post that, through a series of DARPA and NSA programmes, multilingual transcription of broadcast news programmes and telephone conversations was made possible \cite{gales2008application}. Traditionally, acoustic models have been developed that read the audio signals as spectrograms, specifically in the form of Mel Frequency Cepstral Coefficients, to represent audio signals in spectrogram format. 
+
+In our approach, we will be looking at newer deep learning methodologies that have been taking over acoustic models for speech recognition. Through the thesis, we aim to apply this to the songs domain. In our problem statement, we will be interested in exploring techniques in the space of MIR to represent songs as spectrograms, understand the way to extract singing voice from the music, termed as Singing voice Separation (SVS), and understanding ways to model music for the Songs Lyrics Transcription task that we will look into.Additionally, we will be specifically interested in the space of fine-tuning self-supervised models such as Wav2vec2.0 that is a recently successful model in the speech domain that leverages unlabelled data to learn representations of audio. Self-supervised learning is a promising technique that we will see in detail in Chapter 2 that limits the necessity of having labeled data for training supervised models. This is particularly useful as unlabelled data in the form of audio is widely available but doing the necessary transcription with the help of humans is an expensive process \cite{baevski2020wav2vec}. We are also interested in the encoder-decoder architecture that is employed in models such as Whisper from OpenAI that leverage weakly labelled data \cite{radford2023robust}. We will cover the theoretical foundations in more detail when we come to Chapter 2.
+
+
+
+\section{Purpose and Research Question}%
+\label{sec:purpose}
+
+In In this thesis, state of the art deep learning architectures will be used to model songs in order to transcribe lyrics in an automatic fashion. We will also propose an evaluation methodologies on the task of songs lyrics transcription. As part of our research study, we will be answering two major questions : 
+
+\begin{itemize}
+    \item \textbf{Songs lyrics transcription:} How can songs be transcribed into lyrics with minimal data available in a cost-efficient manner?
+    \item \textbf{Evaluation Methodology:} What evaluation methodology will be appropriate for the songs to lyrics transcription problem?
+\end{itemize}
+
+
+
+\section{Approach and Methodology}
+
+This work focuses on the algorithms and procedures to transcribe songs into lyrics. It focuses on deep learning methods and architectures and the approach to evaluate the problem statement. The approach is to perform literature review into the state of the art techniques in the space of Music Information Retrieval (MIR), Automatic Speech Recognition (ASR) and Acoustic Modelling or Language Modelling techniques (AM/LM) to create an end to end song to lyrics transcription model. As part of the study, we will be iterate through experiments on different architectures, techniques and hyperparameter tuning to answer the research question and optimize the results. In order to evaluate the research question, we will identify existing metrics or develop a representative metric to understand the quality of transcripts for the song lyrics. The dataset used for the master thesis will be the DALI dataset. To give a background, DALI dataset is the largest corpus of  synchronised Audio, Lyrics and vocal notes \cite{meseguer2020creating}. The dataset will be split and used for training as well as evaluation purposes. To conclude, the process and results will be critically reviewed and compared to one another. Finally, future developments and improvements will be outlined for this topic to be taken further. 
+
+\subsection{Figures}%
+\label{sec:figures}
+
+general motivation for your work, context and goals: 1-2 pages
+
+\begin{itemize}
+    \item \textbf{Context:} make sure to link where your work fits in
+    \item \textbf{Problem:} gap in knowledge, too expensive, too slow, a deficiency, superseded technology
+    \item \textbf{Strategy:} the way you will address the problem
+\end{itemize}
