@@ -1,5 +1,6 @@
 from dataclasses import dataclass
 import torch
+from torch.optim import lr_scheduler
 
 CHARS_TO_REMOVE_FROM_TRANSCRIPTS = '[\,\?\.\!\-\;\:\"\%\$\&\^\*\@\#\<\>\/\+\\=\_\\}\{\)\(\]\[\`1234567890]'
 
@@ -42,6 +43,7 @@ class TrainingArgs:
     MAX_EPOCHS = 10
     NUM_NODES = 1
     CHARS_TO_REMOVE_FROM_TRANSCRIPTS = '[\,\?\.\!\-\;\:\"\%\$\&\^\*\@\#\<\>\/\+\\=\_\\}\{\)\(\]\[\`1234567890]'
+    LR_SCHEDULER : str = 'reduce_on_plateau_schedule'
 
 
 WAV2VEC2_ARGS = TrainingArgs(MODEL_BACKBONE="facebook/wav2vec2-large-960h-lv60-self", #"facebook/wav2vec2-large-robust-ft-libri-960h"
@@ -49,7 +51,7 @@ WAV2VEC2_ARGS = TrainingArgs(MODEL_BACKBONE="facebook/wav2vec2-large-960h-lv60-s
                              TEST_FILE_PATH = "/home/users/gmenon/notebooks/home/users/gmenon/notebooks/validation_song_metadata_en_demucs_cleaned.csv",
                               MODEL_SAVE_PATH="/home/users/gmenon/workspace/songsLyricsGenerator/src/model_artefacts/wav2vec2_demucs_en_finetuned_model.pt",
                               BATCH_SIZE = 1,
-                              NUM_EPOCHS = 10,
+                              NUM_EPOCHS = 15,
                               FINETUNE_STRATEGY = "no_freeze_deepspeed"
                               )
 

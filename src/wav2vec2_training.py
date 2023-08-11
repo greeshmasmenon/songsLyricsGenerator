@@ -1,9 +1,12 @@
+# Code base readied from the Jupyter Notebook - src/notebooks/Wav2Vec2 Finetuning (readying codebase).ipynb
+
 from constants.mir_constants import WAV2VEC2_ARGS
 from training.wav2vec2_finetune import Wav2Vec2SpeechRecognition, SpeechRecognitionData
 import json
 from dataclasses import dataclass, asdict
 import pandas as pd
 from jiwer import wer
+
 
 
 #print hyperparameters used for training this model into wandb
@@ -24,6 +27,7 @@ inference_predictions = speech_recognition_task.inference(inference_files=infere
                    model_path=WAV2VEC2_ARGS.MODEL_SAVE_PATH,
                   wav2vec2_trainer = speech_recognition_task.wav2vec2_trainer)
 
+
 print(f"Inference Predictions = {inference_predictions}")
 
 print("Starting Validation dataset Word Error Rate Metric Calculation")
@@ -37,24 +41,13 @@ test_datamodule = SpeechRecognitionData.from_files(
 finetuned_predictions = speech_recognition_task.wav2vec2_trainer.predict(speech_recognition_task.wav2vec2_model, 
                                                 datamodule=test_datamodule)
 
-base_pred = speech_recognition_task.wav2vec2_trainer.predict(speech_recognition_task.wav2vec2_model, 
-                                                datamodule=test_datamodule)
-
-test_data["base_pred"] = base_pred
 test_data["finetuned_predictions"] = finetuned_predictions
-test_data.head(10)
-
-base_pred_transformed = []
-for predictions in base_pred:
-    base_pred_transformed.append(predictions[0])
-
+print(test_data.head(10))
 finetuned_pred_transformed = []
 for predictions in finetuned_predictions:
     finetuned_pred_transformed.append(predictions[0])
-
 reference = list(test_data["transcription_capitalized"])
-hypothesis = base_pred_transformed
-
+hypothesis = finetuned_pred_transformed
 error = wer(reference, hypothesis)
 print(f"Word Error Rate = {error}")
 
