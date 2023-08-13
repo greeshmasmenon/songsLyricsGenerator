@@ -18,7 +18,7 @@ class Wav2Vec2SpeechRecognition(SpeechModel):
         super().__init__(wav2vec2_args)
         self.wandb_logger = WandbLogger(project="SLG - wav2vec2 finetuning",log_model=True,)
         self.WAV2VEC2_ARGS = wav2vec2_args
-        self.wav2vec2_model = SpeechRecognition(backbone=self.WAV2VEC2_ARGS.MODEL_BACKBONE,learning_rate=1e-5, optimizer='AdamW')
+        self.wav2vec2_model = SpeechRecognition(backbone=self.WAV2VEC2_ARGS.MODEL_BACKBONE,learning_rate=1e-5, optimizer='sgd')
         self.wav2vec2_trainer = flash.Trainer(accumulate_grad_batches=self.WAV2VEC2_ARGS.ACCUMULATE_GRAD_BATCHES,
                                               precision=self.WAV2VEC2_ARGS.PRECISION,
                                               max_epochs=self.WAV2VEC2_ARGS.MAX_EPOCHS,
