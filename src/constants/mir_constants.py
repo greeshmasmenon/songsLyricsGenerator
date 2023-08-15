@@ -34,7 +34,7 @@ class TrainingArgs:
     TEST_FILE_PATH: str = "/home/users/gmenon/notebooks/home/users/gmenon/notebooks/validation_metadata_cleaned.csv"
     MODEL_BACKBONE: str = "facebook/wav2vec2-base-960h"
     BATCH_SIZE: int = 1
-    NUM_EPOCHS: int = 4
+    NUM_EPOCHS: int = 15
     NUM_GPUS = torch.cuda.device_count()
     MODEL_SAVE_PATH: str = "model_artefacts/finetuned_ALT_model.pt"
     FINETUNE_STRATEGY: str = "freeze"
