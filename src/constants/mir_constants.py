@@ -2,8 +2,6 @@ from dataclasses import dataclass
 import torch
 from torch.optim import lr_scheduler
 
-CHARS_TO_REMOVE_FROM_TRANSCRIPTS = '[\,\?\.\!\-\;\:\"\%\$\&\^\*\@\#\<\>\/\+\\=\_\\}\{\)\(\]\[\`1234567890]'
-
 @dataclass(frozen=True)
 class HPCDataConstants:
     """constants for the use within the Songs to Lyrics generation"""
@@ -53,7 +51,7 @@ WAV2VEC2_ARGS = TrainingArgs(MODEL_BACKBONE="facebook/wav2vec2-large-960h-lv60-s
                               BATCH_SIZE = 2,
                               NUM_EPOCHS = 15,
                               FINETUNE_STRATEGY = "no_freeze_deepspeed"
-                              )
+                              ) # type: ignore
 
 
 # WAV2VEC2_ARGS = TrainingArgs(MODEL_BACKBONE="facebook/wav2vec2-base-960h",
