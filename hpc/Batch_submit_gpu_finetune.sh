@@ -21,8 +21,8 @@ nvidia-smi
 
 module load lang/Python
 module load  vis/FFmpeg
-python3 -m venv slg_finetune
-source slg_finetune/bin/activate
+python3 -m venv slg_finetun
+source slg_finetun/bin/activate
 pip install --upgrade pip wheel
 pip install pydub
 pip install lightning-flash

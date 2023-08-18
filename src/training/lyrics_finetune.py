@@ -1,7 +1,3 @@
-import os
-os. chdir('/home/users/gmenon/workspace/songsLyricsGenerator/src')
-
-
 import re
 import torch
 import json
