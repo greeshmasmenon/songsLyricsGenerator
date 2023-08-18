@@ -1,4 +1,5 @@
-# Code base readied from the Jupyter Notebook - src/notebooks/Wav2Vec2 Finetuning (readying codebase).ipynb
+import os
+os. chdir('/home/users/gmenon/workspace/songsLyricsGenerator/src')
 
 from constants.mir_constants import WAV2VEC2_ARGS
 from training.wav2vec2_finetune import Wav2Vec2SpeechRecognition, SpeechRecognitionData

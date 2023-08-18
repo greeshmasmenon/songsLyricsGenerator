@@ -38,7 +38,7 @@ class TrainingArgs:
     FINETUNE_STRATEGY: str = "freeze"
     ACCUMULATE_GRAD_BATCHES = 16
     PRECISION = 16
-    MAX_EPOCHS = 10
+    MAX_EPOCHS = 15
     NUM_NODES = 1
     CHARS_TO_REMOVE_FROM_TRANSCRIPTS = '[\,\?\.\!\-\;\:\"\%\$\&\^\*\@\#\<\>\/\+\\=\_\\}\{\)\(\]\[\`1234567890]'
     LR_SCHEDULER : str = 'reduce_on_plateau_schedule'

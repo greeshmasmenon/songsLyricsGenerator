@@ -20,10 +20,9 @@ module purge || print_error_and_exit "No 'module' command"
 nvidia-smi
 
 module load lang/Python
-#source slg_env/bin/activate
 module load  vis/FFmpeg
-python3 -m venv slg_finetuned
-source slg_finetuned/bin/activate
+python3 -m venv slg_finetune
+source slg_finetune/bin/activate
 pip install --upgrade pip wheel
 pip install pydub
 pip install lightning-flash
@@ -34,6 +33,7 @@ pip install dali-dataset
 pip install wandb
 pip install jiwer
 
-cd home/users/gmenon/workspace/songsLyricsGenerator/src
-srun python3 /home/users/gmenon/workspace/songsLyricsGenerator/src/wav2vec2_training.py
-#srun python /home/users/gmenon/workspace/songsLyricsGenerator/src/training/lyrics_finetune.py
+cd /home/users/gmenon/workspace/songsLyricsGenerator/src
+
+#srun python /home/users/gmenon/workspace/songsLyricsGenerator/src/wav2vec2_training.py
+srun python3 /home/users/gmenon/workspace/songsLyricsGenerator/src/training/lyrics_finetune.py

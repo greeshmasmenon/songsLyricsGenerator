@@ -63,3 +63,5 @@ src/kenlm/
 slg_demucs/
 hpc/slg_wav2vec2/
 src/SLG - wav2vec2 transfer learning/
+slg_finetuned/
+slg_finetune/
