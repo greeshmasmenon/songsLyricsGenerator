@@ -34,9 +34,9 @@ class TrainingArgs:
     BATCH_SIZE: int = 1
     NUM_EPOCHS: int = 15
     NUM_GPUS = torch.cuda.device_count()
-    MODEL_SAVE_PATH: str = "model_artefacts/finetuned_ALT_model.pt"
+    MODEL_SAVE_PATH: str = "model_artefacts/finetuned_wav2vec2_large_xlsr_53_english_model.pt"
     FINETUNE_STRATEGY: str = "freeze"
-    ACCUMULATE_GRAD_BATCHES = 16
+    ACCUMULATE_GRAD_BATCHES = 8
     PRECISION = 16
     MAX_EPOCHS = 15
     NUM_NODES = 1
@@ -44,20 +44,30 @@ class TrainingArgs:
     LR_SCHEDULER : str = 'reduce_on_plateau_schedule'
 
 
-WAV2VEC2_ARGS = TrainingArgs(MODEL_BACKBONE='facebook/wav2vec2-large-xlsr-53'#"facebook/wav2vec2-large-960h-lv60-self", #"facebook/wav2vec2-large-robust-ft-libri-960h"
-                             TRAIN_FILE_PATH = "/home/users/gmenon/notebooks/home/users/gmenon/notebooks/train_song_metadata_en_demucs_cleaned.csv",
-                             TEST_FILE_PATH = "/home/users/gmenon/notebooks/home/users/gmenon/notebooks/validation_song_metadata_en_demucs_cleaned.csv",
-                              MODEL_SAVE_PATH="/home/users/gmenon/workspace/songsLyricsGenerator/src/model_artefacts/wav2vec2_demucs_en_finetuned_model.pt",
-                              BATCH_SIZE = 2,
-                              NUM_EPOCHS = 15,
-                              FINETUNE_STRATEGY = "no_freeze_deepspeed"
-                              ) # type: ignore
-
-
-# WAV2VEC2_ARGS = TrainingArgs(MODEL_BACKBONE="facebook/wav2vec2-base-960h",
+# WAV2VEC2_ARGS = TrainingArgs(MODEL_BACKBONE='jonatasgrosman/wav2vec2-large-xlsr-53-english',#"facebook/wav2vec2-large-960h-lv60-self", #"facebook/wav2vec2-large-robust-ft-libri-960h"
 #                              TRAIN_FILE_PATH = "/home/users/gmenon/notebooks/home/users/gmenon/notebooks/train_song_metadata_en_demucs_cleaned.csv",
 #                              TEST_FILE_PATH = "/home/users/gmenon/notebooks/home/users/gmenon/notebooks/validation_song_metadata_en_demucs_cleaned.csv",
-#                               MODEL_SAVE_PATH="/home/users/gmenon/workspace/songsLyricsGenerator/src/model_artefacts/wav2vec2_demucs_en_finetuned_base_model.pt",
-#                               BATCH_SIZE = 1,
-#                               NUM_EPOCHS = 4
-#                               )
+#                               MODEL_SAVE_PATH="/home/users/gmenon/workspace/songsLyricsGenerator/src/model_artefacts/wav2vec2_demucs_en_finetuned_model.pt",
+#                               BATCH_SIZE = 2,
+#                               NUM_EPOCHS = 2,
+#                               FINETUNE_STRATEGY = "no_freeze_deepspeed"
+#                               ) # type: ignore
+
+WAV2VEC2_ARGS = TrainingArgs(MODEL_BACKBONE='facebook/wav2vec2-large-960h-lv60-self',#"facebook/wav2vec2-large-960h-lv60-self", #"facebook/wav2vec2-large-robust-ft-libri-960h"
+                             TRAIN_FILE_PATH = "/scratch/users/gmenon/train_song_metadata_en_demucs_cleaned_filtered_095.csv",
+                             TEST_FILE_PATH = "/scratch/users/gmenon/validation_song_metadata_en_demucs_cleaned_filtered_005.csv",
+                              MODEL_SAVE_PATH="/scratch/users/gmenon//model_artefacts/wav2vec2_demucs_en_large-960h-lv60-self_freeze_unfreeze_15epochs_adamw.pt",
+                              BATCH_SIZE = 2,
+                              NUM_EPOCHS = 15,
+                              FINETUNE_STRATEGY = ('freeze_unfreeze', 10)
+                              ) # type: ignore
+
+# WAV2VEC2_ARGS = TrainingArgs(MODEL_BACKBONE='jonatasgrosman/wav2vec2-large-xlsr-53-english',#"facebook/wav2vec2-large-960h-lv60-self", #"facebook/wav2vec2-large-robust-ft-libri-960h"
+#                              TRAIN_FILE_PATH = "/scratch/users/gmenon/train_song_metadata_en_demucs_cleaned_095.csv",
+#                              TEST_FILE_PATH = "/scratch/users/gmenon/validation_song_metadata_en_demucs_cleaned_005.csv",
+#                               MODEL_SAVE_PATH="/scratch/users/gmenon//model_artefacts/wav2vec2_demucs_en_wav2vec2-large-xlsr-53-english_zero_shot.pt",
+#                               BATCH_SIZE = 2,
+#                               NUM_EPOCHS = 2,
+#                               FINETUNE_STRATEGY = "no_freeze_deepspeed"
+#                               ) # type: ignore
+

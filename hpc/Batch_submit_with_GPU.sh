@@ -5,7 +5,7 @@
 #SBATCH --ntasks-per-node=1
 #SBATCH -c 1   # Cores assigned to each tasks
 #SBATCH --qos normal
-#SBATCH --time=0-6:00:00
+#SBATCH --time=0-5:00:00
 #SBATCH --partition=gpu
 #SBATCH -A Christoph.Schommer
 #SBATCH --mail-type=all
@@ -33,6 +33,9 @@ pip install datasets, transformers, argparse
 pip install dali-dataset
 pip install wandb
 pip install jiwer
+pip install pyctcdecode
+pip install https://github.com/kpu/kenlm/archive/master.zip
+
 
 cd home/users/gmenon/workspace/songsLyricsGenerator/src
 srun python3 /home/users/gmenon/workspace/songsLyricsGenerator/src/wav2vec2_training.py
