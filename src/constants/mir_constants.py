@@ -57,7 +57,7 @@ WAV2VEC2_ARGS = TrainingArgs(MODEL_BACKBONE='facebook/wav2vec2-large-960h-lv60-s
                              TRAIN_FILE_PATH = "/scratch/users/gmenon/train_song_metadata_en_demucs_cleaned_filtered_095.csv",
                              TEST_FILE_PATH = "/scratch/users/gmenon/validation_song_metadata_en_demucs_cleaned_filtered_005.csv",
                               MODEL_SAVE_PATH="/scratch/users/gmenon//model_artefacts/wav2vec2_demucs_en_large-960h-lv60-self_freeze_unfreeze_15epochs_adamw.pt",
-                              BATCH_SIZE = 2,
+                              BATCH_SIZE = 1,
                               NUM_EPOCHS = 15,
                               FINETUNE_STRATEGY = ('freeze_unfreeze', 10)
                               ) # type: ignore
