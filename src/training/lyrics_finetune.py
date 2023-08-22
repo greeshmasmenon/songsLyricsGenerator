@@ -60,7 +60,7 @@ class DataCollatorCTCWithPadding:
 
 
     feature_extractor: Wav2Vec2FeatureExtractor
-    bert_tokenizer: BertTokenizer
+    tokenizer: AutoTokenizer
     padding: Union[bool, str] = True
 
     def __call__(self, features: List[Dict[str, Union[List[int], torch.Tensor]]]) -> Dict[str, torch.Tensor]:
@@ -81,13 +81,13 @@ class DataCollatorCTCWithPadding:
             padding=self.padding,
             return_tensors="pt")
     
-        labels_batch = self.bert_tokenizer.pad(
+        labels_batch = self.tokenizer.pad(
             label_features,
             padding=self.padding,
             return_tensors="pt",
             )
 
-        label_attention_batch = self.bert_tokenizer.pad(
+        label_attention_batch = self.tokenizer.pad(
             label_attention_features,
             padding=self.padding,
             return_tensors="pt",
@@ -109,21 +109,21 @@ class SpeechRecognitionDataModule(LightningDataModule):
         super().__init__()
         self.batch_size = WAV2VEC2_ARGS.BATCH_SIZE
         self.num_workers = num_workers
-        self.tokenizer = AutoTokenizer.from_pretrained(hparams.wav2vec2_model)
-        self.bert_tokenizer = BertTokenizer.from_pretrained(hparams.lm_model)
+        self.tokenizer = AutoTokenizer.from_pretrained(hparams.lm_model)
+        #self.bert_tokenizer = AutoTokenizer.from_pretrained(hparams.lm_model)
         #self.feature_extractor = Wav2Vec2FeatureExtractor.from_pretrained(WAV2VEC2_ARGS.MODEL_BACKBONE)
-        self.feature_extractor = Wav2Vec2FeatureExtractor(feature_size=1, sampling_rate=16_000, padding_value=0.0, do_normalize=True, return_attention_mask=True)
+        self.feature_extractor = Wav2Vec2FeatureExtractor(sampling_rate=16_000, do_normalize=True, return_attention_mask=True)
         #self.feature_extractor = AutoFeatureExtractor.from_pretrained(hparams.wav2vec2_model)
         #self.processor = Wav2Vec2Processor(feature_extractor=self.feature_extractor, tokenizer=self.bert_tokenizer)
         #self.processor = AutoProcessor(feature_extractor=self.feature_extractor, tokenizer=self.bert_tokenizer)
         #self.processor = WhisperProcessor(feature_extractor=self.feature_extractor, tokenizer=self.bert_tokenizer)
-        self.data_collator = DataCollatorCTCWithPadding(feature_extractor=self.feature_extractor, bert_tokenizer=self.bert_tokenizer, padding=True,)
+        self.data_collator = DataCollatorCTCWithPadding(feature_extractor=self.feature_extractor, tokenizer=self.tokenizer, padding=True)
         self.cpu_count = 4
         print(f"CPU Count = {self.cpu_count}")
     
     def setup(self, stage=None):
-        train_df = pd.read_csv(WAV2VEC2_ARGS.TRAIN_FILE_PATH)
-        validation_df = pd.read_csv(WAV2VEC2_ARGS.TEST_FILE_PATH)
+        train_df = pd.read_csv(WAV2VEC2_ARGS.TRAIN_FILE_PATH).head(1000)
+        validation_df = pd.read_csv(WAV2VEC2_ARGS.TEST_FILE_PATH).head(10)
         if stage == 'fit' or stage is None:
             print("In Stage = Fit")
             train_dataset = Dataset.from_dict(
@@ -178,8 +178,8 @@ class SpeechRecognitionDataModule(LightningDataModule):
         batch["input_values"] = self.feature_extractor(audio["array"], sampling_rate=audio["sampling_rate"]).input_values[0]
         batch["attention_mask"] = self.feature_extractor(audio["array"], sampling_rate=audio["sampling_rate"]).attention_mask[0]
         batch["input_length"] = len(batch["input_values"])
-        batch["labels"] = self.bert_tokenizer(batch["transcription"]).input_ids
-        batch["label_attention_mask"] = self.bert_tokenizer(batch["transcription"]).attention_mask
+        batch["labels"] = self.tokenizer(batch["transcription"]).input_ids
+        batch["label_attention_mask"] = self.tokenizer(batch["transcription"]).attention_mask
         #print(batch)
         # with self.processor.as_target_processor():
         #     batch["labels"] = self.processor(batch["transcription"]).input_ids
@@ -190,75 +190,73 @@ class Wav2SeqModel(LightningModule):
     def __init__(self, hparams):
         super().__init__()
         self.batch_size = hparams.batch_size
+        self.learning_rate=hparams.learning_rate
         self.save_hyperparameters()
-        self.bert_tokenizer = BertTokenizer.from_pretrained(hparams.lm_model)
-        speech_recognition_task = Wav2Vec2SpeechRecognition(wav2vec2_args=WAV2VEC2_ARGS)
+        self.tokenizer = AutoTokenizer.from_pretrained(hparams.lm_model)
+        #speech_recognition_task = Wav2Vec2SpeechRecognition(wav2vec2_args=WAV2VEC2_ARGS)
         #self.wav2vec2 = AutoModelForCTC.from_pretrained(hparams.wav2vec2_model,ctc_zero_infinity=False,ctc_loss_reduction="sum")
         self.wav2vec2 = SpeechRecognition.load_from_checkpoint("/scratch/users/gmenon/model_artefacts/wav2vec2_demucs_en_large-960h-lv60-self_freeze_unfreeze_15epochs_adam.pt").model
         #self.wav2vec2.freeze_feature_encoder()
         #self.wav2vec2 = AutoModel.from_pretrained(hparams.wav2vec2_model)
-        self.wav2vec2.eval()
         #print(self.wav2vec2.config)
         self.seq2seq = AutoModelForCausalLM.from_pretrained(hparams.lm_model)
         self.seq2seq.config.is_decoder = True
         self.seq2seq.add_cross_attention = True
-        self.seq2seq.train()
         bert_unwanted = np.zeros((1996,), dtype=int)
-        bert_wanted = np.ones((len(self.bert_tokenizer.get_vocab())-1996,), dtype=int)
+        bert_wanted = np.ones((len(self.tokenizer.get_vocab())-1996,), dtype=int)
         self.weights = torch.Tensor(np.concatenate((bert_unwanted, bert_wanted), axis=0)).cuda()
         #print(self.seq2seq.config)
 
     def forward(self, audio, attention_mask, labels, label_attention_mask):
         #print("entering forward step")
+        self.wav2vec2.eval()
         encoder_outputs = self.wav2vec2(audio,
                                         attention_mask=attention_mask,
                                         output_hidden_states=True,
                                         output_attentions=True)
         encoder_hidden_states = encoder_outputs[0]  
-        encoder_attention_mask = self.wav2vec2._get_feature_vector_attention_mask(
-               encoder_hidden_states.shape[1], 
-               attention_mask
-               )
+        encoder_attention_mask = self.wav2vec2._get_feature_vector_attention_mask(encoder_hidden_states.shape[1], attention_mask)
         #print(encoder_attention_mask)
-        #print(f"[PRIOR]decoder_input_ids={labels}")
+        #print(f"[PRIOR]decoder_input_ids={labels}") 
         #print(f"encoder_hidden_states = {encoder_hidden_states}")
         #print(f"[PRIOR]decoder_attention_masks={label_attention_mask}")
-        #decoder_input_ids = self.shift_tokens_right(labels, 0, 101)
+        #decoder_input_ids = labels
+        decoder_input_ids = self.shift_tokens_right(labels, 0, 101) 
+        #label = tensor([[ 2035,  1045, 10587,  2079,  2003,  2191,  2293,  2000,  2017,   102]], device='cuda:0'), decoder_input_ids = tensor([[  101,  2035,  1045, 10587,  2079,  2003,  2191,  2293,  2000,  2017]], device='cuda:0')
+        #print(f"label = {labels}, decoder_input_ids = {decoder_input_ids}")
         #decoder_attention_masks = self.shift_tokens_right_mask(label_attention_mask)
+        #decoder_attention_masks = label_attention_mask
         #print(f"Shape of labels ={labels.shape}, label_attention_mask = {label_attention_mask.shape}")
         #print(f"[AFTER]decoder_input_ids={decoder_input_ids}")
         #print(f"[AFTER]decoder_attention_masks={decoder_attention_masks}")
-        decoder_outputs = self.seq2seq(input_ids=labels,
-                                       #attention_mask = decoder_attention_masks,
+        #print(f"Shape/Labels = {labels.shape},{labels}")
+        decoder_outputs = self.seq2seq(input_ids=decoder_input_ids,
+                                       #attention_mask = label_attention_mask,
                                        encoder_hidden_states=encoder_hidden_states)
-                                       #,encoder_attention_mask=encoder_attention_mask) 
+                                       #encoder_attention_mask=encoder_attention_mask) 
         # decoder_outputs = self.seq2seq(input_ids=labels, attention_mask = label_attention_mask, encoder_attention_mask=encoder_attention_mask)
         return decoder_outputs
 
-    # def generate(self, audio):
-    #     encoder_outputs = self.wav2vec2(audio[0],output_hidden_states=True,output_attentions=True)
-    #     encoder_hidden_states = encoder_outputs[0]
-    #     bos_ids = (
-    #         torch.ones(
-    #             (encoder_hidden_states.size()[0], 1),
-    #             dtype=torch.long,
-    #             device=self.seq2seq.device,
-    #         )
-    #         * self.seq2seq.config.pad_token_id
-    #     )
-    #     return self.seq2seq.generate(
-    #         input_ids=bos_ids,
-    #         encoder_hidden_states=encoder_hidden_states,
-    #     )
+    def generate(self, audio, bos_tensor):
+        encoder_outputs = self.wav2vec2(audio,
+                                        #attention_mask=attention_mask,
+                                        output_hidden_states=True,
+                                        output_attentions=True)
+        encoder_hidden_states = encoder_outputs[0]
+        print(f"Shape/BOS IDs = {bos_tensor.shape},{bos_tensor}")
+        return self.seq2seq(
+            input_ids=bos_tensor,
+            encoder_hidden_states=encoder_hidden_states,
+        )
 
     def training_step(self, batch, batch_idx):
         #print("entering training step")
         audio = batch["input_values"]
         # audio = batch["input_values"].unsqueeze(0)
         attention_mask = batch["attention_mask"]
-        label_attention_mask = batch["label_attention_masks"] 
+        label_attention_mask = batch["label_attention_masks"]
         #print(f"audio={audio}, attention_mask = {attention_mask}, label_attention_mask = {label_attention_mask}")
-        labels = batch["labels"][:,1:-1]
+        labels = batch["labels"]
         #print(f" To test model outputs with = {labels}, To send to model = {labels}")
         #print(label_attention_mask[:,1:],label_attention_mask[:,:-1]) #tensor([[ 101, 2157, 2055, 2085, 1045, 1005, 1049, 5595, 5595,  102]]) tensor([[ 101, 2157, 2055, 2085, 1045, 1005, 1049, 5595, 5595]]
         #labels = labels.reshape(self.batch_size,-1)
@@ -269,8 +267,8 @@ class Wav2SeqModel(LightningModule):
         target_lengths = torch.full(size=(self.batch_size,), fill_value=labels.shape[0], dtype=torch.long)
         #print("Shape of Logits and Labels")
         #print(logits.shape,labels.shape)
-        loss = None
-        ce_loss = nn.CrossEntropyLoss()
+        #loss = None
+        ce_loss = nn.CrossEntropyLoss(ignore_index=0)
         loss = ce_loss(logits.squeeze(),labels.squeeze())
         #ce_loss = nn.CrossEntropyLoss(weight=self.weights)
         #loss = ce_loss(logits.permute(0,2,1), labels.permute(1,0))
@@ -280,7 +278,7 @@ class Wav2SeqModel(LightningModule):
         #print("entering validation step")
         #audio = batch["input_values"].unsqueeze(0)
         audio = batch["input_values"]
-        labels = batch["labels"][:,1:-1]
+        labels = batch["labels"]
         
         attention_mask = batch["attention_mask"]
         label_attention_mask = batch["label_attention_masks"]
@@ -291,12 +289,12 @@ class Wav2SeqModel(LightningModule):
         #logits = logits.reshape(-1, self.batch_size, self.seq2seq.config.vocab_size)
         #input_lengths = torch.full(size=(self.batch_size,), fill_value=logits.shape[0], dtype=torch.long)
         #target_lengths = torch.full(size=(self.batch_size,), fill_value=labels.shape[0], dtype=torch.long)
-        loss=None
+        #loss=None
         #ctc_loss =  nn.CTCLoss(blank=0)
         #loss = ctc_loss(logits,labels,input_lengths,target_lengths)
         #print("Shape of Logits and Labels")
         #print(logits.shape,labels.shape)
-        ce_loss = nn.CrossEntropyLoss()
+        ce_loss = nn.CrossEntropyLoss(ignore_index=0)
         loss = ce_loss(logits.squeeze(),labels.squeeze())
         #loss = ce_loss(logits.permute(0,2,1), labels.permute(1,0))
         predicted_ids = torch.argmax(logits, dim=-1)
@@ -305,14 +303,14 @@ class Wav2SeqModel(LightningModule):
         #print(f"labels = {labels}")
         #print(f"Shape/predicted ids = {predicted_ids.shape},{predicted_ids}")
         #print(f"original transcript = {batch['transcription']}")
-        print(f"original text = {self.bert_tokenizer.decode(labels[0],skip_special_tokens=False)}, labels = {labels[0]}")
+        print(f"original text = {self.tokenizer.decode(labels[0],skip_special_tokens=False)}, labels = {labels[0]}")
         #predicted_text = predicted_ids.type(torch.int32)
-        print(f"Predicted text = {self.bert_tokenizer.decode(predicted_ids[0],skip_special_tokens=False)}, predicted ids = {predicted_ids[0]}")
+        print(f"Predicted text = {self.tokenizer.decode(predicted_ids[0],skip_special_tokens=False)}, predicted ids = {predicted_ids[0]}")
         self.log('val_loss', loss, on_step=True, on_epoch=True)
 
     def configure_optimizers(self):
         print("Entering Optimization Step")
-        return torch.optim.Adam(self.parameters(), lr=hparams.learning_rate)
+        return torch.optim.Adam(self.parameters(), lr=self.learning_rate)
 
     @staticmethod
     def shift_tokens_right(input_ids: torch.Tensor, pad_token_id: int, decoder_start_token_id: int):
@@ -345,16 +343,6 @@ class Wav2SeqModel(LightningModule):
 def run(hparams):
     print(hparams)
     model = Wav2SeqModel(hparams)
-    trainer = Trainer(max_epochs=5,devices=1, accelerator="gpu", logger=wandb_logger)
+    trainer = Trainer(max_epochs=1,devices=1, accelerator="gpu", logger=wandb_logger)
     trainer.fit(model,SpeechRecognitionDataModule(WAV2VEC2_ARGS,num_workers=4,hparams=hparams))
     return model, trainer
-
-
-hparams = argparse.Namespace()
-hparams.wav2vec2_model = 'facebook/wav2vec2-large-960h-lv60-self'
-hparams.lm_model = 'bert-base-uncased' #'facebook/bart-large'
-hparams.vocab_size = 20000
-hparams.learning_rate = 1e-6
-hparams.batch_size = 1
-
-model,trainer = run(hparams=hparams)
