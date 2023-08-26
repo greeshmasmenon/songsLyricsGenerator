@@ -1,12 +1,9 @@
 #!/bin/bash -l
 #SBATCH -J SLG
 #SBATCH -N 1
-#SBATCH -G 1
-#SBATCH -C volta32
 #SBATCH --ntasks-per-node=1
 #SBATCH -c 4   # Cores assigned to each tasks
-#SBATCH --time=0-10:00:00
-#SBATCH -p gpu
+#SBATCH --time=0-1:00:00
 #SBATCH -A Christoph.Schommer
 #SBATCH --qos normal
 #SBATCH --mail-type=all
@@ -34,10 +31,6 @@ pip install datasets, transformers, argparse
 pip install dali-dataset
 pip install wandb
 pip install jiwer
-pip install pyctcdecode
-pip install https://github.com/kpu/kenlm/archive/master.zip
-
-
 
 #srun python3 /home/users/gmenon/workspace/songsLyricsGenerator/src/wav2vec2_training.py
-srun python /home/users/gmenon/workspace/songsLyricsGenerator/src/lyrics_finetune.py
+srun python3 /home/users/gmenon/workspace/songsLyricsGenerator/src/lyrics_finetune.py

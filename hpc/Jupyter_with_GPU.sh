@@ -2,7 +2,8 @@
 #SBATCH -J SLG
 #SBATCH -N 1
 #SBATCH -G 1
-#SBATCH --ntasks-per-node=2
+#SBATCH -C volta32
+#SBATCH --ntasks-per-node=1
 #SBATCH -c 4   # Cores assigned to each tasks
 #SBATCH --time=0-8:00:00
 #SBATCH -p gpu
@@ -33,6 +34,18 @@ pip install wandb
 pip install jiwer
 pip install pyctcdecode
 pip install https://github.com/kpu/kenlm/archive/master.zip
+pip install jupyter
+
+jupyter notebook --ip $(hostname -i) --no-browser  & pid=$!
+sleep 5s
+jupyter notebook list
+jupyter --paths
+jupyter kernelspec list
+echo "Enter this command on your laptop: ssh -p 8022 -NL 8888:$(hostname -i):8888 ${USER}@access-iris.uni.lu " > notebook.log
+wait $pid
+
+
+
 
 
 # print_error_and_exit() { echo "***ERROR*** $*"; exit 1; }
@@ -51,15 +64,3 @@ pip install https://github.com/kpu/kenlm/archive/master.zip
 # pip install datasets, transformers, 
 # pip install dali-dataset
 # pip install wandb
-pip install jupyter
-
-
-
-
-jupyter notebook --ip $(hostname -i) --no-browser  & pid=$!
-sleep 5s
-jupyter notebook list
-jupyter --paths
-jupyter kernelspec list
-echo "Enter this command on your laptop: ssh -p 8022 -NL 8888:$(hostname -i):8888 ${USER}@access-iris.uni.lu " > notebook.log
-wait $pid
