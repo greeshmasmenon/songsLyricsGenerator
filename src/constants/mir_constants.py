@@ -38,7 +38,7 @@ class TrainingArgs:
     FINETUNE_STRATEGY: str = "freeze"
     ACCUMULATE_GRAD_BATCHES = 8
     PRECISION = 16
-    MAX_EPOCHS = 15
+    MAX_EPOCHS = 20
     NUM_NODES = 1
     CHARS_TO_REMOVE_FROM_TRANSCRIPTS = '[\,\?\.\!\-\;\:\"\%\$\&\^\*\@\#\<\>\/\+\\=\_\\}\{\)\(\]\[\`1234567890]'
     LR_SCHEDULER : str = 'reduce_on_plateau_schedule'
@@ -59,7 +59,7 @@ WAV2VEC2_ARGS = TrainingArgs(MODEL_BACKBONE='facebook/wav2vec2-large-960h-lv60-s
                               MODEL_SAVE_PATH="/scratch/users/gmenon//model_artefacts/wav2vec2_demucs_en_large-960h-lv60-self_freeze_unfreeze_15epochs_adamw.pt",
                               BATCH_SIZE = 1,
                               NUM_EPOCHS = 15,
-                              FINETUNE_STRATEGY = ('freeze_unfreeze', 10)
+                              FINETUNE_STRATEGY = ('freeze_unfreeze', 5)
                               ) # type: ignore
 
 # WAV2VEC2_ARGS = TrainingArgs(MODEL_BACKBONE='jonatasgrosman/wav2vec2-large-xlsr-53-english',#"facebook/wav2vec2-large-960h-lv60-self", #"facebook/wav2vec2-large-robust-ft-libri-960h"

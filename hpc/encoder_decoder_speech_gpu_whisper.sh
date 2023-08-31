@@ -5,7 +5,7 @@
 #SBATCH -C volta32
 #SBATCH --ntasks-per-node=1
 #SBATCH -c 4   # Cores assigned to each tasks
-#SBATCH --time=0-15:00:00
+#SBATCH --time=0-18:00:00
 #SBATCH -p gpu
 #SBATCH -A Christoph.Schommer
 #SBATCH --qos normal
@@ -40,4 +40,4 @@ pip install https://github.com/kpu/kenlm/archive/master.zip
 
 
 #srun python3 /home/users/gmenon/workspace/songsLyricsGenerator/src/wav2vec2_training.py
-srun python /home/users/gmenon/workspace/songsLyricsGenerator/src/lyrics_finetune_copy.py
+srun python /home/users/gmenon/workspace/songsLyricsGenerator/src/lyrics_finetune.py
