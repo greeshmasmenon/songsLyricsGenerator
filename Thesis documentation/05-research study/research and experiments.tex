@@ -4,7 +4,7 @@
 \label{sec:researchstudy}
 
 
-Through this chapter, we will set up our research study by identifying baselines for this problem, improve on the baselines by basing our study on related work discussed in the previous chapters, motivate the way forward towards our proposed architecture for the system. Through this process, we will build on existing research work, motivate our way forward and finally propose an architecture for us to compare results with existing systems. 
+Through this chapter, we will set up our research study by identifying baselines for this problem, improve on the baselines by basing our study on related work discussed in the previous chapters, motivate the way forward towards our proposed architecture for the system. Through this process, we will build on existing research work, motivate our way forward and finally propose an architecture for us to compare results with existing systems.
 
 Our research study will cover the following approaches and share results and discussions around the same. These results and literature reviews will motivate us towards our final architecture that we will discuss in the next chapter.
 
@@ -15,7 +15,7 @@ Our research study will cover the following approaches and share results and dis
     \item  \textit{Domain Adaptation with Encoder - Decoder architectures}
 \end{itemize}
 
-Through the experiments, we will log the results and share the most promising approaches with relevant literature attached. 
+Through the experiments, we will log the results and share the most promising approaches with relevant literature attached.
 
 
 \section{Research and Experiments}%
@@ -38,9 +38,9 @@ from transformers import AutoProcessor, AutoModelForCTC
 model_backbone = "facebook/wav2vec2-large-960h-lv60-self"
 processor = AutoProcessor.from_pretrained(model_backbone)
 model = AutoModelForCTC.from_pretrained(model_backbone)
-\end{verbatim} 
+\end{verbatim}
 
-The specific Wav2Vec2 that was pulled for our baseline model was the Large model that was pre-trained on 960 hours of Librispeech and Libri-Light datasets at 16KHz audio. Once trained, the model was finetuned on the same 960 hours of audio dataset in a labelled fashion with the pre-trained component in evaluation model . This particular model was trained using the Self-Training Objective. Self-training objective represents the fact that an initial acoustic model is trained on available labeled data and then the unlabelled data is inferenced to produce pseudo labels. This is typically done multiple times in Self-training till the entire network converges. In Wav2Vec2, self-training objective is implemented by pre-training the Wav2vec2 model on unlabeled data, use the model to label the unlabelled data and finally use the pseudo labeled data to train the final model \cite{xu2021self}. This model has 315 Million parameters and is the largest Wav2vec2 model. Since, this model is well suited for the Speech domain and produces Speech State of the Art Models  results of 1.8/3.3 Word Error Rate for the Librispeech benchmark, this was selected. On the Whisper model front, the model selected was \texttt{openai/whisper-large-v2}. This is the largest whisper model with the best performance in the speech domain. The Whisper Large V2 model has 1550 Million parameters in the model. This is imported with default weights into our process through the HuggingFace implementation as follows: 
+The specific Wav2Vec2 that was pulled for our baseline model was the Large model that was pre-trained on 960 hours of Librispeech and Libri-Light datasets at 16KHz audio. Once trained, the model was finetuned on the same 960 hours of audio dataset in a labelled fashion with the pre-trained component in evaluation model . This particular model was trained using the Self-Training Objective. Self-training objective represents the fact that an initial acoustic model is trained on available labeled data and then the unlabelled data is inferenced to produce pseudo labels. This is typically done multiple times in Self-training till the entire network converges. In Wav2Vec2, self-training objective is implemented by pre-training the Wav2vec2 model on unlabeled data, use the model to label the unlabelled data and finally use the pseudo labeled data to train the final model \cite{xu2021self}. This model has 315 Million parameters and is the largest Wav2vec2 model. Since, this model is well suited for the Speech domain and produces Speech State of the Art Models  results of 1.8/3.3 Word Error Rate for the Librispeech benchmark, this was selected. On the Whisper model front, the model selected was \texttt{openai/whisper-large-v2}. This is the largest whisper model with the best performance in the speech domain. The Whisper Large V2 model has 1550 Million parameters in the model. This is imported with default weights into our process through the HuggingFace implementation as follows:
 
 \begin{verbatim}
 from transformers import AutoProcessor, AutoModelForSpeechSeq2Seq
@@ -65,13 +65,13 @@ We calculate the Word Error Rates by utilizing the \texttt{jiwer} \cite{morris20
  \textit{Wav2Vec2 Large Self}               &                 0.956  &   \\
  \textit{Whisper Large}                     &         \textbf{0.854} & \\
 \hline  \hline
-\end{tabular} 
+\end{tabular}
 \caption{\label{zeroshot} Zero Shot Performance of Speech State of the Art  models}
 \end{center}
 \end{table}
 
 
-From the above table, we can see that Whisper outperforms the Wav2Vec2 model considerably. This could be attributed to two reasons -  (1) The Whisper model has been trained on significantly larger amount of labeled data. There is a good chance that the data that was considered for this problem is part of the training set and hence, the domain is represented better in this model. (2) The Whisper model is a encoder-decoder architecture and there is a rigorous decoding procedure that is taken into account by Whisper to make the right decision on how to decode. Consequently, the decoding procedure is more robust than that of the generic CTC decoding that Wav2Vec2 employs. 
+From the above table, we can see that Whisper outperforms the Wav2Vec2 model considerably. This could be attributed to two reasons -  (1) The Whisper model has been trained on significantly larger amount of labeled data. There is a good chance that the data that was considered for this problem is part of the training set and hence, the domain is represented better in this model. (2) The Whisper model is a encoder-decoder architecture and there is a rigorous decoding procedure that is taken into account by Whisper to make the right decision on how to decode. Consequently, the decoding procedure is more robust than that of the generic CTC decoding that Wav2Vec2 employs.
 
 
 The  Word Error Rate (WER) metric for songs to lyrics transcription as seen above in table \ref{zeroshot} show that the metric is significantly higher than their counterparts in the speech domain, where the best WER reported in the papers are \textit{0.033}. Hence, the songs do not directly transfer very well and cannot be reliably used as a direct solution to the problem. In the next section, we outline the hypothesis of understanding the key difference between speech and songs and finding a way to bridge the gap through pre-processing.
@@ -103,15 +103,15 @@ The table \ref{demucsperformance}  shows that there is a significant improvement
  \textit{Wav2Vec2 Large Self + SVS}    & 0.851 \\
  \textit{Whisper Large + SVS}   & \textbf{0.677} \\
 \hline  \hline
-\end{tabular} 
+\end{tabular}
 \caption{\label{demucsperformance} Performance of Vocal Separation with baseline models}
 \end{center}
 \end{table}
 
 
-Evaluating the performance of DEMUCS, we can see through auditory inspection a clean vocal separation for majority of the songs. However, there are also cases where the entire vocal component has been misclassified as music instrument and removed from the vocal separated audio, and also cases where there is leakage from the instruments to the vocal component. Since we use the algorithm merely to separate the audio and not delve into the robustness of the approach, we are not evaluating the performance of DEMUCs on our dataset. A future improvement that can be done for this, that could further improve the results at the risk of increasing model complexity is to perform source separation only when it is useful. This could be achieved by training a classifier to predict whether source separation would be successful or not by looking at the spectrogram. 
+Evaluating the performance of DEMUCS, we can see through auditory inspection a clean vocal separation for majority of the songs. However, there are also cases where the entire vocal component has been misclassified as music instrument and removed from the vocal separated audio, and also cases where there is leakage from the instruments to the vocal component. Since we use the algorithm merely to separate the audio and not delve into the robustness of the approach, we are not evaluating the performance of DEMUCs on our dataset. A future improvement that can be done for this, that could further improve the results at the risk of increasing model complexity is to perform source separation only when it is useful. This could be achieved by training a classifier to predict whether source separation would be successful or not by looking at the spectrogram.
 
-    
+
 \subsection{Does Transfer Learning further improve the solution?}
 
     \begin{figure} [H]
@@ -121,11 +121,11 @@ Evaluating the performance of DEMUCS, we can see through auditory inspection a c
     \label{fig:transferlearning}
 \end{figure}
 
-In this section, we will pick up from the conclusions of the previous research question. In a zero shot setting with source separation, we are already seeing improvements in both the architectures from the baseline. One of the challenges with songs data is that, the lyrics are not always fully formed sentences such as speech or are spoken with contractions and expansions to make musical effect. Hence, there is a discernible shift in the domain between the speech domain and songs domain. In order to improve the domain knowledge of the model into the songs domain, we will look into transfer learning approaches that can leverage the information learnt in the existing speech domain and learn more about translating the features into the song domain. 
+In this section, we will pick up from the conclusions of the previous research question. In a zero shot setting with source separation, we are already seeing improvements in both the architectures from the baseline. One of the challenges with songs data is that, the lyrics are not always fully formed sentences such as speech or are spoken with contractions and expansions to make musical effect. Hence, there is a discernible shift in the domain between the speech domain and songs domain. In order to improve the domain knowledge of the model into the songs domain, we will look into transfer learning approaches that can leverage the information learnt in the existing speech domain and learn more about translating the features into the song domain.
 Transfer learning is the approach where features generated from one problem are applied to a different problem statement. This initial problem could be similar or be in a completely different setting dependent on the approach in which transfer learning is applied. In our case, we are still interested in the audio inputs to text transcription output, which is similar to the speech domain. Hence, we will leverage the fine-tuning approach of transfer learning. This is a well documented approach for learning on tasks where there is less data as seen here \cite{buragohain2022deep} \cite{hosna2022transfer}
 
 
-In our transfer learning studies, we will apply transfer learning through the following approach : 
+In our transfer learning studies, we will apply transfer learning through the following approach :
 \begin{itemize}
     \item We will take the pre-trained or trained model and freeze the parameters to not allow further learning/training.
     \item We will unfreeze the Language Modeling head (LM), which is a series of layers that are on top of the models that allow for translation into the problem statement.
@@ -147,7 +147,7 @@ In our particular method, we will fine-tune the models using PyTorch Lightning a
  \textit{Wav2Vec2 Large Self + SVS + TL}    & 0.7416  \\
  \textit{Whisper Large Self + SVS + TL}   & \textbf{0.607}  \\
 \hline  \hline
-\end{tabular} 
+\end{tabular}
 \caption{\label{transferlearning-performance-table} Summary of Transfer Learning (Fine-tuning)}
 \end{center}
 \end{table}
@@ -176,14 +176,14 @@ The results clearly show the improvement due to Transfer Learning on the two arc
         \label{fig:tl-losscurves}
 \end{figure}
 
-As seen in figure \ref{fig:tl-losscurves}, the two models are learning effectively from the new domain using fine-tuning approach of transfer learning. The Whisper model's loss curves are quite steep and settle down into a equilibrium before \texttt{EarlyStopping} is activated. 
+As seen in figure \ref{fig:tl-losscurves}, the two models are learning effectively from the new domain using fine-tuning approach of transfer learning. The Whisper model's loss curves are quite steep and settle down into a equilibrium before \texttt{EarlyStopping} is activated.
 
 From the above, we have made a lot of improvements on the encoding part of the architectures to be better able to understand the songs domain, we will explore further improvements to be done in the decoding procedure. Our decoding procedure till now has been naive for the Wav2vec2 model as it looks at greedy search only. On the other side, the decoding procedure for Whisper is state of the art, with language identification, beam search and a transformers based decoder architecture all included into the model. Hence, in the next section, we will be implementing improvements that further target the Wav2vec2 architecture mainly.
- 
- 
+
+
 \subsection{Does beam-search based decoding methods improve the solution?}
 
-In this particular section, we will look at improvements in the decoding architecture. Till now, the Wav2Vec2 architecture has looked at CTC based greedy decoding. As detailed in section \ref{sec:decoders}, there are different types of decoders available that are in the space of Natural Language Processing. Our hypothesis for this section is that we will be able to greatly improve the currrent state of the art by implementing better decoding mechanisms that have knowledge about the lyrics domain. The first improvement that we will see in this particular research question is to see whether Beam Search improves the current best results we have obtained through our research studies. 
+In this particular section, we will look at improvements in the decoding architecture. Till now, the Wav2Vec2 architecture has looked at CTC based greedy decoding. As detailed in section \ref{sec:decoders}, there are different types of decoders available that are in the space of Natural Language Processing. Our hypothesis for this section is that we will be able to greatly improve the currrent state of the art by implementing better decoding mechanisms that have knowledge about the lyrics domain. The first improvement that we will see in this particular research question is to see whether Beam Search improves the current best results we have obtained through our research studies.
 
 
     \begin{figure}
@@ -193,7 +193,7 @@ In this particular section, we will look at improvements in the decoding archite
     \label{fig:beamsearch}
 \end{figure}
 
-The Figure \ref{fig:beamsearch} clearly shows the difference between greedy and beam search. The former just takes the highest probable element at each turn and uses Connectionist Temporal Classification(CTC) decoding to create a coherant candidate generation. However, as seen in the figure for beam search, we can choose multiple candidates at each step and then calculate the best overall probability for a sequence of characters to be in the domain of lyrics. Hence, the hypothesis is that the beam search algorithm will significantly improve our current best results as it takes into account multiple candidates. In our study, we took \texttt{beam-size=5} and calculated the WER metric for the validation dataset. The results that were obtained can be seen in table \ref{beamsearch-table}. 
+The Figure \ref{fig:beamsearch} clearly shows the difference between greedy and beam search. The former just takes the highest probable element at each turn and uses Connectionist Temporal Classification(CTC) decoding to create a coherant candidate generation. However, as seen in the figure for beam search, we can choose multiple candidates at each step and then calculate the best overall probability for a sequence of characters to be in the domain of lyrics. Hence, the hypothesis is that the beam search algorithm will significantly improve our current best results as it takes into account multiple candidates. In our study, we took \texttt{beam-size=5} and calculated the WER metric for the validation dataset. The results that were obtained can be seen in table \ref{beamsearch-table}.
 
 In Table \ref{beamsearch-table} onward, we will be referring to \textit{Wav2Vec2 Large Self + SVS + TL} as \textit{Wav2Vec2 Large TL}. Similarly, the model\textit{Whisper Large + SVS + TL} will be referred as \textit{Whisper Large TL}. \\
 
@@ -210,7 +210,7 @@ In Table \ref{beamsearch-table} onward, we will be referring to \textit{Wav2Vec2
  \textit{Wav2Vec2 Large TL + Beam Search}   &  0.7346  \\
  \textit{Whisper Large TL}  &  \textbf{0.607}  \\
 \hline  \hline
-\end{tabular} 
+\end{tabular}
 \caption{\label{beamsearch-table} Summary of Beam Search Decoder}
 \end{center}
 \end{table}
@@ -219,7 +219,7 @@ In Table \ref{beamsearch-table} onward, we will be referring to \textit{Wav2Vec2
 
 From the table, we can see a marginal improvement for the Wav2Vec2 model by implementing Beam Search. When it comes to the Whisper model, beam search is not applied as the model already includes a decoder within it. Hence, there are no improvements that are possible. due to this in the Whisper model. As seen in table \ref{beamsearch-table}, there is only a marginal improvement due to the beam search algorithm. In traditional ASR systems, a lexicon is used along with beam search to give a boost to the words that are there in the target domain. However, with modern approaches, this is rarely done manually and typically is done by leveraging n-gram language models. In the next section, we will create a N-Gram Lyrics Language Model that is trained on the Lyrics domain. Hence, we will use a beam search decoding procedure that gives weightage to both the probabilities from the language model and the acoustic model to come up with the final scores for each candidates at the final step.
 
-    
+
 \subsection{Does having a lyrics language model improve the solution?}
 
 
@@ -263,19 +263,19 @@ The Figure \ref{fig:lyricslanguagemodel} shows an extract from the \texttt{lyric
 \textit{Whisper Large TL} &  0.61  \\
 \textit{Whisper Large TL + Post Processing}  & \textbf{0.54}\\
 \hline  \hline
-\end{tabular} 
+\end{tabular}
 \caption{\label{ngram-table} 5-gram KenLM Lyrics Model}
 \end{center}
 \end{table}
 
 
-From the table \ref{ngram-table}, we can see that the language model boosts the performance of Wav2Vec2 to be on par with the Whisper fine-tuned(Transfer Learning) implementation. Hence, we are able to see a boost in performance by over 17.\% during evaluation. Hence, we can clearly see that the decoder is able to better represent the hidden state outputs from the CTC decoder into the lyrics domain.  
+From the table \ref{ngram-table}, we can see that the language model boosts the performance of Wav2Vec2 to be on par with the Whisper fine-tuned(Transfer Learning) implementation. Hence, we are able to see a boost in performance by over 17.\% during evaluation. Hence, we can clearly see that the decoder is able to better represent the hidden state outputs from the CTC decoder into the lyrics domain.
 
 In the Whisper model, we see a significant improvement (0.07 WER or 12.96\%) by adding a post-processing layer. The Whisper output has the prediction of \texttt{to} as the first token for some of the predictions. This initial token is followed by correct predictions for the most case. In our study, we simply removed this in the post-processing step. By doing so, we see the 12.96\% improvement in WER metrics.
 
 \subsection{Do Pre-Trained Sequence to Sequence Models/Causal Language Models improve the solution?}
 
-We have seen an improvement of more than 29\% till now from our baseline models through transfer learning and language model implementation. In this particular section, our hypothesis is to take inspiration from this paper \cite{wang2021large} and the Whisper architecture, where encoder-decoder architectures have been successfully implemented to learn Speech to text. The hypothesis is that when applied to Songs to Lyrics transcription problem, we will be able to see a boost in performance because the transformers can learn more complex decoding patterns from the encoder outputs than a n-gram model can learn. 
+We have seen an improvement of more than 29\% till now from our baseline models through transfer learning and language model implementation. In this particular section, our hypothesis is to take inspiration from this paper \cite{wang2021large} and the Whisper architecture, where encoder-decoder architectures have been successfully implemented to learn Speech to text. The hypothesis is that when applied to Songs to Lyrics transcription problem, we will be able to see a boost in performance because the transformers can learn more complex decoding patterns from the encoder outputs than a n-gram model can learn.
 
 \begin{figure} [H]
     \centering
@@ -303,7 +303,7 @@ The Sequence to Sequence architecture or Causal Language model can be visualized
  \textit{Wav2Vec2 Encoder - GPT2 Decoder }        & 1.10 \\
  \textit{Whisper Encoder - GPT2 Decoder}      & 1.10 \\
 \hline  \hline
-\end{tabular} 
+\end{tabular}
 \caption{\label{encoderdecoder} Summary of Sequence to Sequence/Causal Models}
 \end{center}
 \end{table}
@@ -312,4 +312,4 @@ The Sequence to Sequence architecture or Causal Language model can be visualized
 \section{Discussion}
 \label{sec:discussion-research}
 
-In this chapter, the experiments have been outlined and the evaluation Word Error Rate metrics have been calculated for the experiments that have been conducted. In the next chapter, we will be diving deep into the results obtained and provide analysis on why the results have come out that way. Through the summarization, we will come up with the conclusion for the thesis and future research direction to improve the system even further. 
+In this chapter, the experiments have been outlined and the evaluation Word Error Rate metrics have been calculated for the experiments that have been conducted. In the next chapter, we will be diving deep into the results obtained and provide analysis on why the results have come out that way. Through the summarization, we will come up with the conclusion for the thesis and future research direction to improve the system even further.
