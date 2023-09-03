@@ -1,5 +1,7 @@
-\documentclass[11pt,twoside,a4paper,openright]{book}
+\documentclass[12pt,twoside,a4paper,openright]{book}
 
+\usepackage{tikz}
+\usepackage{pgfplots}
 \usepackage[utf8]{inputenc}
 \usepackage[T1]{fontenc}
 \usepackage[english]{babel}
@@ -12,28 +14,33 @@
 \usepackage{biblatex} %Imports biblatex package
 \addbibresource{references.bib} %Import the bibliography file
 \usepackage{graphicx}
-\usepackage[margin=2.9cm,inner=3.4cm]{geometry} 
-
+\usepackage[inner=3cm,outer=4cm,bottom=4cm,top=3cm]{geometry}
+\usepackage{setspace}
+\doublespacing %
+\pagestyle{plain}
 \begin{document}
 \pagenumbering{arabic}
-\input{00-frontmatter/titlepage.tex}
 
+%\input{00-frontmatter/titlepage.tex}
 \tableofcontents
 \listoffigures
 \listoftables
 
+\input{00-frontmatter/00-abstract}
+
 \input{01-introduction/01-introduction.tex}
 
-\input{02-fundamentals/02-fundamentals.tex}
+\input{03-Theoretical Foundations/foundations}
 
-\input{03-researchstudy/03-research-foundations.tex}
+\input{04-Problem Formulation & Implementation/data_implementation}
 
-\input{04-research-results/04-research-study}
+\input{05-research study/research and experiments}
 
-\input{05-conclusion/05-conclusion.tex}
+\input{06-research-results/results}
 
-\input{95-Appendix/95-appendix.tex}
+\input{07-conclusion/conclusion}
+
+\input{95-Appendix/95-appendix}
 
 \printbibliography %Prints bibliography
-
 \end{document}
