@@ -8,7 +8,7 @@ In this particular chapter, we will be looking at the results that have been cap
 \section{Experiment Results}%
 \label{sec:results}
 
-As seen from the Table \ref{consolidated-results-summary}, the best result is obtained from the experiment where fine-tuning (transfer learning) and Singing Voice Separation(SVS) has been applied to the Whisper model. This enables the Whisper model to leverage the speech representations it already has learnt to be adapted to the songs domain. Additionally, fine-tuning for Whisper also improves the decoding procedure as the model is able to better adapt to the lyrics domain. This represents an improvement of 0.31 WER (or 57.4\% improvement) over the baseline Whisper architecture that was showcased. The second best results are seen in the implementation of fine-tuning (transfer learning) with the Wav2Vec2 architecture as an encoder and Connectionist Temporal Classification (CTC) with beam search and 5-gram lyrics language model (see Figure \ref{fig:lyricslanguagemodel} ) as the decoder. This represents an improvement of 0.36 WER (or 60\% improvement) over the baseline Wav2Vec2 architecture. 
+As seen from the Table \ref{consolidated-results-summary}, the best result is obtained from the experiment where fine-tuning (transfer learning) and Singing Voice Separation(SVS) has been applied to the Whisper model. This enables the Whisper model to leverage the speech representations it already has learnt to be adapted to the songs domain. Additionally, fine-tuning for Whisper also improves the decoding procedure as the model is able to better adapt to the lyrics domain. This represents an improvement of 0.31 WER (or 57.4\% improvement) over the baseline Whisper architecture that was showcased. The second best results are seen in the implementation of fine-tuning (transfer learning) with the Wav2Vec2 architecture as an encoder and Connectionist Temporal Classification (CTC) with beam search and 5-gram lyrics language model (see Figure \ref{fig:lyricslanguagemodel} ) as the decoder. This represents an improvement of 0.36 WER (or 60\% improvement) over the baseline Wav2Vec2 architecture.
 
 
 \renewcommand{\arraystretch}{2}
@@ -37,7 +37,7 @@ T9 & Vocal & \textit{Wav2Vec2 Large Self (Fine-tuned)} & Transformer &  BERT & 0
 T10 & Vocal & \textit{Whisper Large (Encoder only)} & Transformer &  BERT & 0.82  \\
 
  \hline  \hline
-\end{tabular} 
+\end{tabular}
 \caption{\label{consolidated-results-summary} Songs to Lyrics Transcription Experiment Results \\ \textit{Top Result is shown with a Bold value and the Second best is shown with an underline}}
 \end{center}
 \end{table}
@@ -177,7 +177,7 @@ In subsequent sections, we will cover key questions and analysis from the result
         (100,0.54)
     };
     \addlegendentry{L8}
-    
+
 
     \addplot[dashed,mark=-,orange] plot coordinates {
         (0,0.84)
@@ -209,7 +209,7 @@ In subsequent sections, we will cover key questions and analysis from the result
     };
     \addlegendentry{T10}
 
-  
+
     \end{axis}
     \end{tikzpicture}
     \caption{Validation Word Error Rates (WER) across experiments} \label{fig:experiment-wers}
@@ -222,7 +222,7 @@ In subsequent sections, we will cover key questions and analysis from the result
 
 The Encoder - decoder architecture is implemented by using Wav2Vec2 or the Whisper Encoder only model as the encoder and BertLM as the decoder. The outputs from the encoder are the hidden states of the model that is passed along with a sequence of lyrics for the training to work (with teacher forcing). This is already explained in Section \ref{sec:experiments}. We can analyze the training process by removing the \texttt{EarlyStopping} and seeing how longer training of the encoder-decoder module affects the model run. As it can be seen in Figure \ref{fig:encoder-decoder-loss-curves}, the validation losses remain mostly around the same (even with a slight increase) but the training losses keep dropping. This shows that there is an overfitting that is happening as the model is training further. This is a problem that has been seen with Transformer based architectures as seen here -  \cite{mosbach2020stability} and \cite{devlin2018bert}. The main reason for the instability as per the papers shared above is to increase the dataset size with increased diversity to overcome this. We will cover this in the Future Direction and next steps part.
 
-\begin{figure} 
+\begin{figure}
      \begin{subfigure}[b]{0.48\textwidth}
          \includegraphics[width=\textwidth]{05-research study/figures/wav2vec2-bert-wer-graph.pdf}
          \caption{Wav2Vec2 Encoder - BertLM Decoder}
@@ -248,10 +248,10 @@ The most common area where we see the beam search with language model improving 
 On the other case, when the Wav2vec2 model is not able to generate the right features from the audio snippet, the beam search does not provide the correct lyrics. To illustrate, let us take the example of \texttt{ONE TWO ONE TWO THREE ARGHH}, greedy search predicts \texttt{TOO} and beam search with language model predicts \texttt{O}. In this case, the model is not able to transcribe the true lyrics at all.
 
 We can see from visual inspection that the beam search with language model improves the readability aspect of the results. For example, let us take the lyrics \texttt{YOU LEAVE ME ONCE AGAIN HOME ALONE}, greedy search based decoder predicts \texttt{VERY WIM TAKIN ON MY DOTER} and beam search with language model predicts \texttt{VERY I'M TAKING ON MY DATE}. While the transcribed lyrics are wrong in this case, it definitely is more readable for the user.
-    
+
 \subsection{\textbf{What are the common errors seen in the best performing model?}}
 
-The best model is the Fine-tuned Whisper Model with DEMUCS applied to the audio signal and post-processing done on the outputs. The details on the post-processing can be seen in \ref{sec:experiments}.The results from the Whisper model are confident but not always correct. However, the results from the model are readable and well formed.To illustrate, the Whisper model transcribes accurately on most of the scenarios covered by the Wav2Vec2 model shown in the previous section. For the true lyrics of \texttt{so learn from your mistakes}, Whisper predicts correct \texttt{so learn from your mistakes}. When Whisper makes mistakes, it confidently makes mistakes. Take this example - \texttt{you leave me once again home alone}. Whisper predicts it as \texttt{the only one taking all my own}. Similarly, taking a common example shared for the Wav2Vec2 model, let us take the lyrics \texttt{one two one two three arghh}, Whisper predicts \texttt{so what you want to know}. 
+The best model is the Fine-tuned Whisper Model with DEMUCS applied to the audio signal and post-processing done on the outputs. The details on the post-processing can be seen in \ref{sec:experiments}.The results from the Whisper model are confident but not always correct. However, the results from the model are readable and well formed.To illustrate, the Whisper model transcribes accurately on most of the scenarios covered by the Wav2Vec2 model shown in the previous section. For the true lyrics of \texttt{so learn from your mistakes}, Whisper predicts correct \texttt{so learn from your mistakes}. When Whisper makes mistakes, it confidently makes mistakes. Take this example - \texttt{you leave me once again home alone}. Whisper predicts it as \texttt{the only one taking all my own}. Similarly, taking a common example shared for the Wav2Vec2 model, let us take the lyrics \texttt{one two one two three arghh}, Whisper predicts \texttt{so what you want to know}.
 
 Hence, it can be seen that while the Word Error Rates are in the 53-54\% range , the readability of the model results are good. While it depends on the problem, this can be a positive (Lyrics Generation task) or negative feature (Lyrics Transcription).
 
